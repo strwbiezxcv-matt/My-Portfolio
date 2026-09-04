@@ -1,0 +1,38 @@
+
+> @figma/my-make-file@0.0.1 build
+> vite build
+
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:13:29). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+[2m11:32:02 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
+[2m11:32:02 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
+[33mYou or a plugin you are using have set `optimizeDeps.esbuildOptions` but this option is now deprecated. Vite now uses Rolldown to optimize the dependencies. Please use `optimizeDeps.rolldownOptions` instead.[39m
+[36mvite v8.2.1 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 2022 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                                1.15 kB │ gzip:  0.58 kB
+dist/assets/1-J65sNNbS.png                                                   102.73 kB
+dist/assets/2-DipFfNyN.png                                                   164.24 kB
+dist/assets/6-BAf49AhP.png                                                   336.58 kB
+dist/assets/4-BteRt9f2.png                                                   395.73 kB
+dist/assets/5-BZ0J8o4M.png                                                   495.36 kB
+dist/assets/7-BvbHLB7F.png                                                   728.49 kB
+dist/assets/mhc_achievers_(1)-nocNs8uA.png                                   877.08 kB
+dist/assets/3-LvNNPjAm.png                                                   942.77 kB
+dist/assets/cert-2-CZQvph8W.jpg                                              982.31 kB
+dist/assets/ICEPEP_PUBMATS_(4)-DAsq_GUX.png                                1,048.52 kB
+dist/assets/566233249_1232512482016657_5023862266293251196_n-D1PSIVg0.png  1,054.33 kB
+dist/assets/ANGARA_ATHLETES_(5)-DQAlBuOi.png                               1,118.37 kB
+dist/assets/PUBMATS_(38)-C8FC6ddN.png                                      1,154.41 kB
+dist/assets/COE__25_-B6N91JoG.png                                          1,182.09 kB
+dist/assets/PUBMATS_(19)-Bx11w3hM.png                                      1,339.74 kB
+dist/assets/man_up_speak_up_(2)-CIyAqhnM.png                               1,467.73 kB
+dist/assets/medal_(3)-ObL0PwKx.png                                         1,776.87 kB
+dist/assets/cpe_achievers_(27)-BAp22nih.png                                2,507.54 kB
+dist/assets/ayos_lang..._(9)-BhbbjoyD.png                                  2,567.09 kB
+dist/assets/index-X-qWYoH-.css                                               102.94 kB │ gzip: 16.37 kB
+dist/assets/index-Djkaz_-K.js                                                301.11 kB │ gzip: 96.82 kB
+
+[32m✓ built in 831ms[39m
