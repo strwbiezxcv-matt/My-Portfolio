@@ -21,21 +21,26 @@ import pubmat8 from "../imports/PUBMATS_(19).png";
 import pubmat9 from "../imports/ayos_lang..._(9).png";
 import pubmat10 from "../imports/man_up_speak_up_(2).png";
 import learnixImg from "../imports/learnix.png";
+import learnixProjectImg from "../imports/learnix_image.png";
 import womensMonthImg from "../imports/womens-month.png";
 import infographicsImg from "../imports/infographics.png";
 import salesTrainingCertImg from "../imports/sales-training-certificate.png";
 
 /* PROJECTS (new stacked-card section)
-   To add/edit a project: append an entry below. All fields except liveUrl/githubUrl are required;
-   omit liveUrl/githubUrl when there is no link. */
+   To add/edit a project: append an entry below. Title, category, description, and technologies are required;
+   omit liveUrl/githubUrl when there is no link. Optional labels override the default button text. */
+
 export type Project = {
   title: string;
   category: string;
   description: string;
   technologies: string[];
-  year: string;
+  year?: string;
+  image?: string;
   liveUrl?: string;
   githubUrl?: string;
+  liveLabel?: string;
+  githubLabel?: string;
 };
 
 export const projects: Project[] = [
@@ -68,12 +73,23 @@ export const projects: Project[] = [
     technologies: ["Illustrator", "Brand Design", "Print"],
     year: "2025",
   },
-  {
+    {
     title: "TITLE",
     category: "Graphic Design",
     description: "description",
     technologies: ["Photoshop", "Canva", "Social Media"],
     year: "2025",
+  },
+  {
+    title: "Learnix",
+    category: "AI-Powered Learning Platform",
+    description: "Learnix is an AI-powered learning and reviewer platform designed to help students transform their learning materials into organized reviewers, notes, quizzes, and examinations.",
+    technologies: ["React", "TypeScript", "AI", "Supabase"],
+    image: learnixProjectImg,
+    liveUrl: "https://learnix-29i44ukrq-matt-e31f.vercel.app",
+    githubUrl: "https://github.com/strwbiezxcv-matt/Learnix.git",
+    liveLabel: "LIVE",
+    githubLabel: "GITHUB",
   },
 ];
 

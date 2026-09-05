@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, Github, ExternalLink, Volume2, VolumeX } from "lucide-react";
 import type { Theme } from "../../theme";
@@ -40,16 +40,25 @@ function slotFor(offset: number, reduced: boolean): Slot {
 }
 
 function ProjectCardBody({ project, isActive, theme }: { project: Project; isActive: boolean; theme: Theme }) {
-  return (
+    return (
     <div className="flex h-full w-full flex-col p-5 sm:p-7">
+      {/* Project image (optional â€” only renders when provided) */}
+      {project.image && (
+        <div className="mb-4 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+          <img src={project.image} alt={`${project.title} screenshot`} className="w-full object-contain" />
+        </div>
+      )}
+
       {/* Tags */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <span className="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white dark:bg-gray-100 dark:text-gray-900">
           {project.category}
         </span>
-        <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-medium uppercase tracking-wider ${theme.chip}`}>
-          {project.year}
-        </span>
+        {project.year && (
+          <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-medium uppercase tracking-wider ${theme.chip}`}>
+            {project.year}
+          </span>
+        )}
       </div>
 
       <h3 className="text-xl font-bold tracking-tight sm:text-2xl">{project.title}</h3>
@@ -70,13 +79,13 @@ function ProjectCardBody({ project, isActive, theme }: { project: Project; isAct
       {isActive && (project.liveUrl || project.githubUrl) && (
         <div className="mt-4 flex flex-wrap gap-2">
           {project.liveUrl && (
-            <a href={project.liveUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className={theme.btnPrimary}>
-              <ExternalLink size={15} /> Live Demo
+            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={theme.btnPrimary}>
+              <ExternalLink size={15} /> {project.liveLabel ?? "Live Demo"}
             </a>
           )}
           {project.githubUrl && (
-            <a href={project.githubUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className={theme.btnGhost}>
-              <Github size={15} /> GitHub
+            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={theme.btnGhost}>
+              <Github size={15} /> {project.githubLabel ?? "GitHub"}
             </a>
           )}
         </div>
@@ -174,16 +183,16 @@ export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
                 onClick={() => onNavigate("contact")}
                 className={`cursor-pointer text-xs uppercase tracking-[0.25em] font-pixel transition-colors duration-300 sm:text-sm ${theme.link}`}
               >
-                ALL PROJECTS →
+                ALL PROJECTS â†’
               </button>
             </div>
           </div>
 
-          {/* Title + subtitle — same style as the other sections */}
+          {/* Title + subtitle â€” same style as the other sections */}
           <div className="text-center">
             <div className="mb-4 flex items-center justify-center gap-3">
               <span className="section-num-rule" />
-              <span className="section-num">03 · PROJECTS</span>
+              <span className="section-num">03 Â· PROJECTS</span>
               <span className="section-num-rule" />
             </div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Projects</h2>
@@ -292,4 +301,5 @@ export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
     </section>
   );
 }
+
 
