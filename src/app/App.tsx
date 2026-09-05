@@ -9,6 +9,7 @@ import Organizations from "./components/sections/Organizations";
 import Affiliations from "./components/sections/Affiliations";
 import Certifications from "./components/sections/Certifications";
 import Contact from "./components/sections/Contact";
+import Recommendations from "./components/sections/Recommendations";
 import PubmatsModal from "./components/PubmatsModal";
 
 const SECTION_IDS = [
@@ -20,6 +21,7 @@ const SECTION_IDS = [
   "affiliations",
   "certifications",
   "contact",
+  "recommendations",
 ];
 
 export default function App() {
@@ -105,6 +107,7 @@ export default function App() {
           onNavigate={scrollToSection}
           onViewWork={() => scrollToSection("home")}
         />
+        <Recommendations theme={theme} />
       </main>
 
       <footer className={`py-8 border-t text-center text-sm transition-colors duration-500 ${theme.footer}`}>

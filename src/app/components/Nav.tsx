@@ -11,6 +11,7 @@ export const NAV_SECTIONS = [
   "affiliations",
   "certifications",
   "contact",
+  "recommendations",
 ];
 
 interface NavProps {
