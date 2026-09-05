@@ -4,6 +4,7 @@ import Nav from "./components/Nav";
 import Hero from "./components/sections/Hero";
 import About from "./components/sections/About";
 import Experience from "./components/sections/Experience";
+import Projects from "./components/sections/Projects";
 import Organizations from "./components/sections/Organizations";
 import Affiliations from "./components/sections/Affiliations";
 import Certifications from "./components/sections/Certifications";
@@ -14,6 +15,7 @@ const SECTION_IDS = [
   "home",
   "about",
   "experience",
+  "projects",
   "work",
   "affiliations",
   "certifications",
@@ -94,6 +96,7 @@ export default function App() {
           onNavigate={scrollToSection}
         />
         <Experience theme={theme} onNavigate={scrollToSection} />
+        <Projects theme={theme} isDark={isDark} onNavigate={scrollToSection} />
         <Organizations theme={theme} isDark={isDark} onNavigate={scrollToSection} />
         <Affiliations theme={theme} onNavigate={scrollToSection} />
         <Certifications theme={theme} onNavigate={scrollToSection} />

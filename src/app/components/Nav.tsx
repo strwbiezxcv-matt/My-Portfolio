@@ -6,6 +6,7 @@ export const NAV_SECTIONS = [
   "home",
   "about",
   "experience",
+  "projects",
   "work",
   "affiliations",
   "certifications",

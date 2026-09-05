@@ -14,9 +14,12 @@ export default function PubmatsModal({ theme, onClose }: PubmatsModalProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-[100] overflow-y-auto"
       onClick={onClose}
     >
+      {/* Full-height wrapper: centers the card when it fits, but never clips
+          the top rows when the modal is taller than the viewport (scrollable). */}
+      <div className="flex min-h-full items-center justify-center p-4">
       <motion.div
         initial={{ scale: 0.92, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -70,6 +73,7 @@ export default function PubmatsModal({ theme, onClose }: PubmatsModalProps) {
           </div>
         </div>
       </motion.div>
+      </div>
     </motion.div>
   );
 }

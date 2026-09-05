@@ -19,6 +19,59 @@ import pubmat7 from "../imports/PUBMATS_(38).png";
 import pubmat8 from "../imports/PUBMATS_(19).png";
 import pubmat9 from "../imports/ayos_lang..._(9).png";
 import pubmat10 from "../imports/man_up_speak_up_(2).png";
+import salesTrainingCertImg from "../imports/sales-training-certificate.png";
+
+/* PROJECTS (new stacked-card section)
+   To add/edit a project: append an entry below. All fields except liveUrl/githubUrl are required;
+   omit liveUrl/githubUrl when there is no link. */
+export type Project = {
+  title: string;
+  category: string;
+  description: string;
+  technologies: string[];
+  year: string;
+  liveUrl?: string;
+  githubUrl?: string;
+};
+
+export const projects: Project[] = [
+  {
+    title: "TITLE",
+    category: "Embedded Systems",
+    description: "description",
+    technologies: ["Arduino", "C++", "Proteus", "3D Modeling"],
+    year: "2025",
+  },
+  {
+    title: "TITLE",
+    category: "QA & Web Testing",
+    description: "description",
+    technologies: ["Manual QA", "Responsive Testing", "Chrome DevTools"],
+    year: "2026",
+  },
+  {
+    title: "TITLE",
+    category: "Web Development",
+    description: "description",
+    technologies: ["React", "TypeScript", "Tailwind CSS", "Motion"],
+    year: "2026",
+    githubUrl: "https://github.com/strwbiezxcv-matt/My-Portfolio",
+  },
+  {
+    title: "TITLE",
+    category: "Brand & Identity",
+    description: "description",
+    technologies: ["Illustrator", "Brand Design", "Print"],
+    year: "2025",
+  },
+  {
+    title: "TITLE",
+    category: "Graphic Design",
+    description: "description",
+    technologies: ["Photoshop", "Canva", "Social Media"],
+    year: "2025",
+  },
+];
 
 export const organizations = [
   { name: "Public Relation and Societal Affairs", image: prsaImg, blend: "multiply" as const },
@@ -105,30 +158,30 @@ export const certificates = [
     type: "Certificate",
     period: "2026-2027",
     description: "Training completion certificate from the Sales Training Conference, covering sales strategy and client engagement.",
-    image: "",
+    image: salesTrainingCertImg,
   },
 ];
 
 export const seminars = [
   {
     title: "Visual Programming and APK Development: Bridging Creativity and Engineering Innovation",
-    category: "Seminar",
+    category: "Training",
     type: "Seminar / Talk",
-    period: "Training",
+    period: "Seminar",
     description: "Session bridging creative design with application development and engineering innovation.",
     image: visualProgrammingCertImg,
   },
   {
     title: "Code to Career: Mastering AI Development and Thriving in On-the-Job Training Evaluation",
-    category: "Seminar",
+    category: "Training",
     type: "Seminar / Talk",
-    period: "Training",
+    period: "Seminar",
     description: "Guidance on AI development skills and navigating on-the-job training evaluations.",
     image: codeToCareerCertImg,
   },
   {
     title: "Safety Officer 2 (SO2)",
-    category: "Training",
+    category: "Seminar",
     type: "Training / Certificate",
     period: "Training",
     description: "Certification as Safety Officer 2, covering workplace safety standards, risk assessment, and compliance.",

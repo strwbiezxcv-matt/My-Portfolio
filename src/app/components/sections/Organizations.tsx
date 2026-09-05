@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import type { CSSProperties } from "react";
 import type { Theme } from "../../theme";
 import { organizations } from "../../data";
 
@@ -9,11 +10,11 @@ interface OrganizationsProps {
 }
 
 export default function Organizations({ theme, isDark, onNavigate }: OrganizationsProps) {
-  const blendFor = (blend: string) => {
+  const blendFor = (blend: string): CSSProperties["mixBlendMode"] => {
     // "screen" blends a logo into white and becomes invisible on light backgrounds.
     // Use it only in dark mode; fall back to "multiply" in light mode.
     if (blend === "screen") return isDark ? "screen" : "multiply";
-    return blend;
+    return blend as CSSProperties["mixBlendMode"];
   };
 
   return (
@@ -47,10 +48,8 @@ export default function Organizations({ theme, isDark, onNavigate }: Organizatio
                   <img
                     src={org.image}
                     alt={org.name}
-                    className="max-h-full max-w-full object-contain transition-all duration-500"
-                    style={{ filter: "grayscale(1) contrast(1)", mixBlendMode: blendFor(org.blend) }}
-                    onMouseEnter={(e) => e.currentTarget.style.filter = "grayscale(0) contrast(1)"}
-                    onMouseLeave={(e) => e.currentTarget.style.filter = "grayscale(1) contrast(1)"}
+                    className="max-h-full max-w-full object-contain rounded p-1 grayscale contrast-100 mix-blend-[var(--logo-blend)] transition-all duration-500 group-hover:grayscale-0 group-hover:mix-blend-normal group-hover:bg-white"
+                    style={{ "--logo-blend": blendFor(org.blend) } as CSSProperties}
                   />
                 </div>
                 <span className={`text-[11px] font-semibold uppercase tracking-[0.18em] leading-snug ${theme.muted} transition-colors duration-300 group-hover:text-brand`}>
