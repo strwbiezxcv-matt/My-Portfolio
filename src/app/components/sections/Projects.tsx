@@ -149,8 +149,8 @@ export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
           transition={{ duration: 0.6 }}
         >
           {/* Section header */}
-          <div className="mb-10 flex items-center justify-between gap-4">
-            <span className={`text-xs uppercase tracking-[0.25em] font-pixel sm:text-sm ${theme.muted}`}>03 — projects</span>
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <span className={`text-xs uppercase tracking-[0.25em] font-pixel sm:text-sm ${theme.muted}`}>04 — projects</span>
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -174,6 +174,15 @@ export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
               </button>
             </div>
           </div>
+
+          {/* Title + subtitle — same style as the other sections */}
+          <div className="text-center">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Projects</h2>
+            <p className={`mb-10 text-sm uppercase tracking-[0.2em] ${theme.muted}`}>
+              Things I&apos;ve built, designed, and worked on.
+            </p>
+          </div>
+
           {/* Card stack */}
           <div
             className="relative mx-auto h-[540px] w-full max-w-xl select-none sm:h-[520px]"

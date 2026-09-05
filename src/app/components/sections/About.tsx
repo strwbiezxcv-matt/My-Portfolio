@@ -49,6 +49,7 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
             </p>
           </div>
 
+
           {/* Pubmats + Experience buttons */}
           <div className="flex flex-wrap gap-4 justify-center mt-10 mb-14">
             <motion.button
