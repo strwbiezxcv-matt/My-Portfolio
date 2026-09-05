@@ -126,8 +126,14 @@ export default function Certifications({ theme, onNavigate }: CertificationsProp
   }, [lightbox]);
 
   return (
-    <section id="certifications" className="min-h-screen flex items-center justify-center px-6 py-20">
-      <div className="mx-auto max-w-6xl w-full">
+    <section id="certifications" className="relative min-h-screen flex items-center justify-center px-6 py-20 overflow-hidden">
+      {/* Ambient decorations */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute inset-0 bg-diag-lines opacity-70" />
+        <span className="deco-plus" style={{ top: "12%", right: "8%" }} />
+        <span className="deco-plus" style={{ bottom: "16%", left: "7%" }} />
+      </div>
+      <div className="relative mx-auto max-w-6xl w-full">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -135,6 +141,11 @@ export default function Certifications({ theme, onNavigate }: CertificationsProp
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="section-num-rule" />
+            <span className="section-num">06 · CERTIFICATIONS</span>
+            <span className="section-num-rule" />
+          </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
             Certifications &amp; Trainings
           </h2>

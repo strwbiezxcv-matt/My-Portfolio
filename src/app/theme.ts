@@ -41,5 +41,8 @@ export function getTheme(isDark: boolean): Theme {
     footer:isDark ? "border-t border-white/10 text-gray-500" : "border-t border-gray-200 text-gray-500",
     dot:"bg-brand",
     borderAccent:isDark ? "border-brand/40" : "border-brand/30",
+    tintAlt:isDark
+      ? "bg-[#121813] border-y border-white/5"
+      : "bg-[#f8faf4] border-y border-gray-100",
   };
 }

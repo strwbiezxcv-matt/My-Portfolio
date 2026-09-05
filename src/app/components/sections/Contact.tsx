@@ -24,14 +24,26 @@ const contacts = [
 
 export default function Contact({ theme, onNavigate, onViewWork }: ContactProps) {
   return (
-    <section id="contact" className="min-h-screen flex items-center justify-center px-6 py-20">
-      <div className="mx-auto max-w-3xl w-full text-center">
+    <section id="contact" className="relative min-h-screen flex items-center justify-center px-6 py-20 overflow-hidden">
+      {/* Ambient decorations */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute inset-0 bg-diag-lines opacity-60" />
+        <span className="deco-plus" style={{ top: "18%", left: "10%" }} />
+        <span className="deco-plus" style={{ bottom: "22%", right: "9%" }} />
+        <span className="pulse-dot absolute size-1.5 rounded-full bg-brand/50" style={{ top: "36%", right: "16%" }} />
+      </div>
+      <div className="relative mx-auto max-w-3xl w-full text-center corner-frame">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="section-num-rule" />
+            <span className="section-num">07 · CONTACT</span>
+            <span className="section-num-rule" />
+          </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
             Let&apos;s Create Together
           </h2>

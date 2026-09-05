@@ -1,0 +1,227 @@
+﻿/* ============================================================
+   Subtle decorative utilities — green identity, no gradients.
+   Solid thin lines / dots only; very low opacity so backgrounds
+   enhance content without competing with it.
+   ============================================================ */
+
+/* Fine technical grid lines */
+.bg-grid-fine {
+  background-image:
+    linear-gradient(to right, rgb(111 143 71 / 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(111 143 71 / 0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.dark .bg-grid-fine {
+  background-image:
+    linear-gradient(to right, rgb(163 197 133 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(163 197 133 / 0.06) 1px, transparent 1px);
+}
+
+/* Minimal dot matrix */
+.bg-dots-green {
+  background-image: radial-gradient(rgb(111 143 71 / 0.18) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+}
+.dark .bg-dots-green {
+  background-image: radial-gradient(rgb(163 197 133 / 0.12) 1.2px, transparent 1.2px);
+}
+
+/* Section number label (mono font, technical feel) */
+.section-num {
+  font-family: 'Space Mono', 'Courier New', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.35em;
+  color: rgb(111 143 71 / 0.75);
+}
+.dark .section-num {
+  color: rgb(163 197 133 / 0.6);
+}
+
+/* Thin green accent line beside the number */
+.section-num-rule {
+  display: inline-block;
+  width: 2.5rem;
+  height: 1px;
+  background: rgb(111 143 71 / 0.5);
+  vertical-align: middle;
+}
+.dark .section-num-rule {
+  background: rgb(163 197 133 / 0.4);
+}
+
+/* Slow floating decorative shapes */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+.float-slow { animation: float-slow 8s ease-in-out infinite; }
+.float-slow-rev { animation: float-slow 10s ease-in-out infinite reverse; }
+
+/* Decorative geometric outline shapes */
+.deco-shape {
+  position: absolute;
+  border: 1px solid rgb(111 143 71 / 0.25);
+  pointer-events: none;
+}
+.dark .deco-shape {
+  border-color: rgb(163 197 133 / 0.18);
+}
+
+/* Respect reduced motion: disable decorative animation */
+@media (prefers-reduced-motion: reduce) {
+  .float-slow,
+  .float-slow-rev {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   Design system — technical micro decorations (green identity)
+   ============================================================ */
+
+/* Thin diagonal line pattern */
+.bg-diag-lines {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgb(111 143 71 / 0.05) 0 1px,
+    transparent 1px 14px
+  );
+}
+.dark .bg-diag-lines {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgb(163 197 133 / 0.04) 0 1px,
+    transparent 1px 14px
+  );
+}
+
+/* Small "+" crosshair mark */
+.deco-plus {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+.deco-plus::before,
+.deco-plus::after {
+  content: "";
+  position: absolute;
+  background: rgb(111 143 71 / 0.45);
+}
+.dark .deco-plus::before,
+.dark .deco-plus::after {
+  background: rgb(163 197 133 / 0.35);
+}
+.deco-plus::before {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+.deco-plus::after {
+  top: 50%;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  transform: translateY(-50%);
+}
+
+/* Corner bracket frame (top-left + bottom-right) */
+.corner-frame {
+  position: relative;
+}
+.corner-frame::before,
+.corner-frame::after {
+  content: "";
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+  border-color: rgb(111 143 71 / 0.45);
+}
+.dark .corner-frame::before,
+.dark .corner-frame::after {
+  border-color: rgb(163 197 133 / 0.35);
+}
+.corner-frame::before {
+  top: -10px;
+  left: -10px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+.corner-frame::after {
+  bottom: -10px;
+  right: -10px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+/* Mono technical label */
+.tech-label {
+  font-family: "Space Mono", "Courier New", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgb(111 143 71 / 0.7);
+}
+.dark .tech-label {
+  color: rgb(163 197 133 / 0.55);
+}
+
+/* Soft pulsing decorative dot */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.25);
+  }
+}
+.pulse-dot {
+  animation: pulse-dot 4s ease-in-out infinite;
+}
+
+/* Animated link underline */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+}
+
+/* Committee logo soft green glow on card hover */
+.logo-glow {
+  transition: filter 0.4s ease;
+}
+.group:hover .logo-glow {
+  filter: drop-shadow(0 0 10px rgb(111 143 71 / 0.45));
+}
+.dark .group:hover .logo-glow {
+  filter: drop-shadow(0 0 12px rgb(163 197 133 / 0.35));
+}
+
+/* Respect reduced motion across decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot,
+  .float-slow,
+  .float-slow-rev {
+    animation: none !important;
+  }
+}
+

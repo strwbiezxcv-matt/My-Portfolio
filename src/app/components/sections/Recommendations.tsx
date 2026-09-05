@@ -170,8 +170,17 @@ export default function Recommendations({ theme }: RecommendationsProps) {
   } ${theme.muted} focus:border-brand/60 focus:shadow-[0_0_0_3px_rgba(163,197,133,0.15)]`;
 
   return (
-    <section id="recommendations" className="px-6 py-20 md:py-28">
-      <div className="mx-auto max-w-6xl w-full">
+    <section id="recommendations" className="relative px-6 py-20 md:py-28 overflow-hidden">
+      {/* Ambient decorations */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute inset-0 bg-dots-green opacity-40" />
+        <Quote size={220} strokeWidth={0.5} className="absolute -top-8 right-4 text-brand/10" />
+        <Quote size={140} strokeWidth={0.5} className="absolute bottom-10 -left-4 rotate-180 text-brand/10" />
+        <span className="deco-plus" style={{ top: "18%", left: "5%" }} />
+        <span className="deco-plus" style={{ bottom: "24%", right: "4%" }} />
+        <span className="pulse-dot absolute size-1.5 rounded-full bg-brand/50" style={{ top: "40%", right: "10%" }} />
+      </div>
+      <div className="relative mx-auto max-w-6xl w-full">
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -184,6 +193,11 @@ export default function Recommendations({ theme }: RecommendationsProps) {
             <MessageSquareHeart size={14} className="text-brand" />
             Recommendation
           </span>
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="section-num-rule" />
+            <span className="section-num">08 · RECOMMENDATIONS</span>
+            <span className="section-num-rule" />
+          </div>
           <h2 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight">Recommendations</h2>
           <div className="mt-3 h-1 w-16 rounded-full bg-brand" />
           <p className={`mt-3 text-base ${theme.muted}`}>Have something to say? Leave a recommendation.</p>

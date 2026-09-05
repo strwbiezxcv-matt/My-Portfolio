@@ -10,7 +10,7 @@ interface AffiliationsProps {
 
 export default function Affiliations({ theme, onNavigate }: AffiliationsProps) {
   return (
-    <section id="affiliations" className="min-h-screen flex items-center justify-center px-6 py-20">
+    <section id="affiliations" className={`min-h-screen flex items-center justify-center px-6 py-20 ${theme.tintAlt}`}>
       <div className="mx-auto max-w-3xl w-full">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -19,6 +19,11 @@ export default function Affiliations({ theme, onNavigate }: AffiliationsProps) {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="section-num-rule" />
+            <span className="section-num">05 · AFFILIATIONS</span>
+            <span className="section-num-rule" />
+          </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
             Affiliations &amp; Leadership
           </h2>

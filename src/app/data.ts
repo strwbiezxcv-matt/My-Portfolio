@@ -9,6 +9,7 @@ import dhevcImg from "../imports/7.png";
 import cert2Img from "../imports/cert-2.jpg";
 import visualProgrammingCertImg from "../imports/Visual Programming and APK Development Certificate.jpg";
 import codeToCareerCertImg from "../imports/code to career.png";
+import likhAsenyocertImg from "../imports/LIKHASENYO CERT.png";
 import pubmat1 from "../imports/mhc_achievers_(1).png";
 import pubmat2 from "../imports/cpe_achievers_(27).png";
 import pubmat3 from "../imports/medal_(3).png";
@@ -19,6 +20,9 @@ import pubmat7 from "../imports/PUBMATS_(38).png";
 import pubmat8 from "../imports/PUBMATS_(19).png";
 import pubmat9 from "../imports/ayos_lang..._(9).png";
 import pubmat10 from "../imports/man_up_speak_up_(2).png";
+import learnixImg from "../imports/learnix.png";
+import womensMonthImg from "../imports/womens-month.png";
+import infographicsImg from "../imports/infographics.png";
 import salesTrainingCertImg from "../imports/sales-training-certificate.png";
 
 /* PROJECTS (new stacked-card section)
@@ -95,6 +99,9 @@ export const pubmats = [
   { title: "Midterm Examination", category: "Good Luck Pubmat", image: pubmat8 },
   { title: "Nutrition Month", category: "Social", image: pubmat9 },
   { title: "Independence Day", category: "Holiday", image: pubmat10 },
+  { title: "Learnix App Launch", category: "Technology", image: learnixImg },
+  { title: "Women's Month Celebration", category: "Awareness", image: womensMonthImg },
+  { title: "Infographics Collection", category: "Design", image: infographicsImg },
 ];
 
 export const experience = [
@@ -178,7 +185,7 @@ export const seminars = [
     period: "Seminar",
     description: "Guidance on AI development skills and navigating on-the-job training evaluations.",
     image: codeToCareerCertImg,
-  },
+    },
   {
     title: "Safety Officer 2 (SO2)",
     category: "Seminar",
@@ -186,6 +193,14 @@ export const seminars = [
     period: "Training",
     description: "Certification as Safety Officer 2, covering workplace safety standards, risk assessment, and compliance.",
     image: cert2Img,
+  },
+  {
+    title: "LikhAsenyo Creative Writing Fellowship",
+    category: "Seminar",
+    type: "Seminar / Talk",
+    period: "Seminar",
+    description: "Completion of the LikhAsenyo creative writing and literary arts program organized by the Bicolano Student Writers' Guild.",
+    image: likhAsenyocertImg,
   },
 ];
 

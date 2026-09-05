@@ -140,8 +140,12 @@ export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
   const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
   return (
-    <section id="projects" className="min-h-screen overflow-hidden flex items-center justify-center px-4 py-20 sm:px-6">
-      <div className="mx-auto w-full max-w-6xl">
+    <section id="projects" className={`relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-20 sm:px-6 ${theme.tintAlt}`}>
+      {/* Technical grid backdrop */}
+      <div className="pointer-events-none absolute inset-0 bg-grid-fine opacity-60" aria-hidden="true" />
+      <span className="deco-plus pointer-events-none absolute" style={{ top: "10%", left: "5%" }} aria-hidden="true" />
+      <span className="deco-plus pointer-events-none absolute" style={{ bottom: "12%", right: "6%" }} aria-hidden="true" />
+      <div className="relative mx-auto w-full max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -150,7 +154,7 @@ export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
         >
           {/* Section header */}
           <div className="mb-6 flex items-center justify-between gap-4">
-            <span className={`text-xs uppercase tracking-[0.25em] font-pixel sm:text-sm ${theme.muted}`}>04 — projects</span>
+            
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -177,6 +181,11 @@ export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
 
           {/* Title + subtitle — same style as the other sections */}
           <div className="text-center">
+            <div className="mb-4 flex items-center justify-center gap-3">
+              <span className="section-num-rule" />
+              <span className="section-num">03 · PROJECTS</span>
+              <span className="section-num-rule" />
+            </div>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Projects</h2>
             <p className={`mb-10 text-sm uppercase tracking-[0.2em] ${theme.muted}`}>
               Things I&apos;ve built, designed, and worked on.

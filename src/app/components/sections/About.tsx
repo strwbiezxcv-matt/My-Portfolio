@@ -28,24 +28,35 @@ const skills = [
 
 export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) {
   return (
-    <section id="about" className="min-h-screen flex items-center justify-center px-6 py-20">
-      <div className="mx-auto max-w-6xl w-full text-center">
+    <section id="about" className={`relative min-h-screen flex items-center justify-center px-6 py-20 overflow-hidden ${theme.tintAlt}`}>
+      {/* Ambient decorations */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <span className="deco-plus" style={{ top: "16%", left: "8%" }} />
+        <span className="deco-plus" style={{ bottom: "20%", right: "7%" }} />
+        <span className="pulse-dot absolute size-1.5 rounded-full bg-brand/50" style={{ top: "30%", right: "14%" }} />
+      </div>
+      <div className="relative mx-auto max-w-6xl w-full text-center corner-frame">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="section-num-rule" />
+            <span className="section-num">01 · ABOUT</span>
+            <span className="section-num-rule" />
+          </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
             About Me
           </h2>
           <div className="mx-auto w-24 h-1 rounded-full bg-brand mb-10" />
           <div className="mx-auto max-w-2xl text-center space-y-5">
             <p className={`text-xl leading-relaxed ${theme.text}`}>
-              I&apos;m a passionate creative designer and layout artist with 3 years of experience crafting memorable digital designs. I believe in transforming ideas into reality.
+              I'm a passionate creative designer, layout artist, and web developer with 3 years of experience turning ideas into engaging digital experiences. I combine visual creativity with technical expertise to create designs and websites that are both visually compelling and functional.
             </p>
             <p className={`text-xl leading-relaxed ${theme.muted}`}>
-              My approach combines strategic thinking, innovative design,and technical excellence to create solutions that not only look beautiful but deliver measurable results.
+              My approach combines strategic thinking, innovative design, and technical excellence to create solutions that not only look beautiful but deliver measurable results.
             </p>
           </div>
 
