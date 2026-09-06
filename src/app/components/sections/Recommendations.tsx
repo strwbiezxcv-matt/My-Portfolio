@@ -1,7 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion, AnimatePresence } from "motion/react";
-import { Quote, Send, MessageSquareHeart, ArrowRight, X } from "lucide-react";
+import {
+  Quote,
+  Send,
+  MessageSquareHeart,
+  ArrowRight,
+  X,
+  Loader2,
+  Check,
+} from "lucide-react";
 import type { Theme } from "../../theme";
+import { fetchApprovedRecommendations, insertRecommendation } from "../../../lib/supabase";
 
 interface RecommendationsProps {
   theme: Theme;
@@ -14,59 +23,16 @@ export type Recommendation = {
   message: string;
 };
 
-/* Persistence layer — swap saveRecommendations/loadRecommendations
-   internals for a backend/API call later without touching the UI. */
-const STORAGE_KEY = "strwbiezxcv-recommendations";
-
-function loadRecommendations(): Recommendation[] {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Recommendation[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveRecommendations(items: Recommendation[]) {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  } catch {
-    /* storage unavailable — recommendations stay session-only */
-  }
-}
-
 const MAX_VISIBLE = 5;
-
-/* Seed cards shown until visitors leave their own recommendations. */
-const SEED_RECOMMENDATIONS: Recommendation[] = [
-  {
-    id: "seed-1",
-    name: "Juan Dela Cruz",
-    from: "Easecore",
-    message: "Very creative and easy to work with. Great attention to detail on every deliverable.",
-  },
-  {
-    id: "seed-2",
-    name: "Maria Santos",
-    from: "ICPEP",
-    message: "Reliable, proactive, and always willing to go the extra mile for the team.",
-  },
-  {
-    id: "seed-3",
-    name: "Carlo Reyes",
-    from: "Mentor",
-    message: "A fast learner with a strong design eye. Consistently delivers polished work ahead of schedule.",
-  },
-];
 
 /* Asymmetrical size pattern — cycles by index so the wall stays balanced
    but never looks like a uniform grid. span2 = wider card. */
 const SIZE_PATTERN = [
-  { span: 1, minH: "min-h-[150px]" }, // small
-  { span: 2, minH: "min-h-[150px]" }, // wide
-  { span: 1, minH: "min-h-[170px]" }, // medium
-  { span: 1, minH: "min-h-[150px]" }, // small
-  { span: 1, minH: "min-h-[150px]" }, // small
+  { span: 1, minH: "min-h-[150px]" },
+  { span: 2, minH: "min-h-[150px]" },
+  { span: 1, minH: "min-h-[170px]" },
+  { span: 1, minH: "min-h-[150px]" },
+  { span: 1, minH: "min-h-[150px]" },
 ];
 
 function initialOf(name: string) {
@@ -77,6 +43,7 @@ function initialOf(name: string) {
     .slice(0, 2)
     .toUpperCase();
 }
+
 function RecCard({
   rec,
   index,
@@ -122,56 +89,86 @@ function RecCard({
     </motion.article>
   );
 }
-
 export default function Recommendations({ theme }: RecommendationsProps) {
   const reduceMotion = useReducedMotion();
-  const [items, setItems] = useState<Recommendation[]>(SEED_RECOMMENDATIONS);
+
+  const [items, setItems] = useState<Recommendation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
   const [name, setName] = useState("");
   const [from, setFrom] = useState("");
   const [message, setMessage] = useState("");
-  const [newId, setNewId] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
+  const [formError, setFormError] = useState("");
+
   const [showAll, setShowAll] = useState(false);
 
+  const loadApproved = useMemo(
+    () => async () => {
+      try {
+        const rows = await fetchApprovedRecommendations();
+        setItems(
+          rows.map((r) => ({ id: r.id, name: r.name, from: r.from, message: r.message })),
+        );
+        setLoadError(null);
+      } catch {
+        setLoadError("Recommendations are temporarily unavailable.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
-    setItems(loadRecommendations());
-  }, []);
+    loadApproved();
+  }, [loadApproved]);
 
-  /* Newest first; only the first MAX_VISIBLE appear on the main wall.
-     A freshly submitted card keeps its "new" entrance animation. */
-  const sorted = useMemo(() => {
-    if (!newId) return items;
-    return [...items].sort((a, b) => (a.id === newId ? -1 : b.id === newId ? 1 : 0));
-  }, [items, newId]);
-
-  const visible = sorted.slice(0, MAX_VISIBLE);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !message.trim()) return;
+    if (submitting) return;
 
-    const rec: Recommendation = {
-      id: `rec-${Date.now()}`,
-      name: name.trim(),
-      from: from.trim(),
-      message: message.trim(),
-    };
+    const trimmedName = name.trim();
+    const trimmedMessage = message.trim();
+    if (!trimmedName || !trimmedMessage) return;
 
-    const next = [rec, ...items];
-    setItems(next);
-    saveRecommendations(next);
-    setNewId(rec.id);
-    setName("");
-    setFrom("");
-    setMessage("");
+    setSubmitting(true);
+    setFormStatus("idle");
+    setFormError("");
+    try {
+      const saved = await insertRecommendation({
+        name: trimmedName,
+        from: from.trim(),
+        message: trimmedMessage,
+      });
+      // Immediately show the new recommendation on the right side, newest first.
+      const newRec: Recommendation = {
+        id: saved.id,
+        name: saved.name,
+        from: saved.from,
+        message: saved.message,
+      };
+      setItems((prev) => [newRec, ...prev]);
+      setFormStatus("success");
+      setName("");
+      setFrom("");
+      setMessage("");
+    } catch (err) {
+      setFormStatus("error");
+      setFormError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const inputClass = `w-full rounded-lg border bg-transparent px-3 py-2 text-sm outline-none transition-all duration-300 focus:ring-2 focus:ring-brand/40 ${
-    theme.card
-  } ${theme.muted} focus:border-brand/60 focus:shadow-[0_0_0_3px_rgba(163,197,133,0.15)]`;
+  const sorted = items;
+  const visible = sorted.slice(0, MAX_VISIBLE);
 
+  const inputClass = `w-full rounded-lg border bg-transparent px-3 py-2 text-sm outline-none transition-all duration-300 focus:ring-2 focus:ring-brand/40 ${theme.card} ${theme.muted} focus:border-brand/60 focus:shadow-[0_0_0_3px_rgba(163,197,133,0.15)]`;
   return (
     <section id="recommendations" className="relative px-6 py-20 md:py-28 overflow-hidden">
-      {/* Ambient decorations */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="absolute inset-0 bg-dots-green opacity-40" />
         <Quote size={220} strokeWidth={0.5} className="absolute -top-8 right-4 text-brand/10" />
@@ -181,7 +178,6 @@ export default function Recommendations({ theme }: RecommendationsProps) {
         <span className="pulse-dot absolute size-1.5 rounded-full bg-brand/50" style={{ top: "40%", right: "10%" }} />
       </div>
       <div className="relative mx-auto max-w-6xl w-full">
-        {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -202,10 +198,7 @@ export default function Recommendations({ theme }: RecommendationsProps) {
           <div className="mt-3 h-1 w-16 rounded-full bg-brand" />
           <p className={`mt-3 text-base ${theme.muted}`}>Have something to say? Leave a recommendation.</p>
         </motion.div>
-
-        {/* Two-column layout: form (≈40%) | grid (≈60%) */}
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-10 lg:gap-14 items-start">
-          {/* LEFT — submission chatbox */}
           <motion.form
             onSubmit={handleSubmit}
             initial={{ opacity: 0, y: 30 }}
@@ -216,100 +209,96 @@ export default function Recommendations({ theme }: RecommendationsProps) {
           >
             <div className="mb-4 flex items-center gap-2">
               <span className="size-2 rounded-full bg-brand" />
-              <span className={`text-xs font-medium uppercase tracking-wider ${theme.faint}`}>
-                Leave a recommendation
-              </span>
+              <span className={`text-xs font-medium uppercase tracking-wider ${theme.faint}`}>Leave a recommendation</span>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label htmlFor="rec-name" className={`mb-1 block text-xs font-medium ${theme.muted}`}>
-                  Name
-                </label>
-                <input
-                  id="rec-name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name"
-                  maxLength={60}
-                  className={inputClass}
-                  required
-                />
+                <label htmlFor="rec-name" className={`mb-1 block text-xs font-medium ${theme.muted}`}>Name</label>
+                <input id="rec-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" maxLength={60} className={inputClass} required />
+              </div>
+              <div>
+                <label htmlFor="rec-from" className={`mb-1 block text-xs font-medium ${theme.muted}`}>From</label>
+                <input id="rec-from" type="text" value={from} onChange={(e) => setFrom(e.target.value)} placeholder="Company, school, or position" maxLength={60} className={inputClass} />
+              </div>
+              <div>
+                <label htmlFor="rec-message" className={`mb-1 block text-xs font-medium ${theme.muted}`}>Message</label>
+                <textarea id="rec-message" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Say something nice…" rows={4} maxLength={280} className={`${inputClass} resize-none`} required />
               </div>
 
-              <div>
-                <label htmlFor="rec-from" className={`mb-1 block text-xs font-medium ${theme.muted}`}>
-                  From
-                </label>
-                <input
-                  id="rec-from"
-                  type="text"
-                  value={from}
-                  onChange={(e) => setFrom(e.target.value)}
-                  placeholder="Company, school, or position"
-                  maxLength={60}
-                  className={inputClass}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="rec-message" className={`mb-1 block text-xs font-medium ${theme.muted}`}>
-                  Message
-                </label>
-                <textarea
-                  id="rec-message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Say something nice…"
-                  rows={4}
-                  maxLength={280}
-                  className={`${inputClass} resize-none`}
-                  required
-                />
-              </div>
+              {formStatus === "success" && (
+                <motion.p
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  role="status"
+                  aria-live="polite"
+                  className="flex items-center gap-2 rounded-lg border border-brand/30 bg-brand/10 px-3 py-2 text-sm font-medium text-brand-strong"
+                >
+                  <Check size={15} />
+                  Recommendation submitted successfully!
+                </motion.p>
+              )}
+              {formStatus === "error" && (
+                <motion.p
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  role="alert"
+                  aria-live="assertive"
+                  className="rounded-lg border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-500"
+                >
+                  {formError}
+                </motion.p>
+              )}
 
               <motion.button
                 type="submit"
-                whileHover={reduceMotion ? undefined : { scale: 1.02, y: -1 }}
-                whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                className={`w-full justify-center ${theme.btnPrimary} cursor-pointer`}
+                disabled={submitting}
+                whileHover={reduceMotion || submitting ? undefined : { scale: 1.02, y: -1 }}
+                whileTap={reduceMotion || submitting ? undefined : { scale: 0.98 }}
+                className={`w-full justify-center ${theme.btnPrimary} cursor-pointer disabled:opacity-60`}
               >
-                <Send size={14} />
-                Send Recommendation
+                {submitting ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" />
+                    Submitting&hellip;
+                  </>
+                ) : (
+                  <>
+                    <Send size={14} />
+                    Submit Recommendation
+                  </>
+                )}
               </motion.button>
             </div>
           </motion.form>
-
-          {/* RIGHT — asymmetrical recommendation grid (max 5 visible) */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            {visible.length === 0 ? (
-              <div
-                className={`flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed p-10 text-center ${theme.card} ${theme.muted}`}
-              >
+            {loading ? (
+              <div className={`flex min-h-[280px] items-center justify-center rounded-2xl border border-dashed p-10 text-center ${theme.card} ${theme.muted}`} aria-live="polite">
+                <Loader2 size={22} className="animate-spin text-brand" />
+              </div>
+            ) : loadError ? (
+              <div className={`flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed p-10 text-center ${theme.card} ${theme.muted}`}>
                 <Quote size={24} className="mb-3 text-brand/60" />
-                <p className="text-sm">Be the first to leave a recommendation.</p>
+                <p className="text-sm">{loadError}</p>
+              </div>
+            ) : visible.length === 0 ? (
+              <div className={`flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed p-10 text-center ${theme.card} ${theme.muted}`}>
+                <Quote size={24} className="mb-3 text-brand/60" />
+                <p className="text-sm">No recommendations yet. Be the first to leave one!</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 {visible.map((rec, index) => (
-                  <RecCard
-                    key={rec.id}
-                    rec={rec}
-                    index={index}
-                    theme={theme}
-                    isNew={rec.id === newId}
-                  />
+                  <RecCard key={rec.id} rec={rec} index={index} theme={theme} />
                 ))}
               </div>
             )}
 
-            {/* View All */}
             {sorted.length > MAX_VISIBLE && (
               <motion.button
                 onClick={() => setShowAll(true)}
@@ -324,8 +313,6 @@ export default function Recommendations({ theme }: RecommendationsProps) {
           </motion.div>
         </div>
       </div>
-
-      {/* All Recommendations modal */}
       <AnimatePresence>
         {showAll && (
           <motion.div
@@ -347,19 +334,12 @@ export default function Recommendations({ theme }: RecommendationsProps) {
                 <div className={`flex items-center justify-between px-6 py-5 border-b ${theme.divider}`}>
                   <div>
                     <h3 className="text-2xl font-bold tracking-tight">All Recommendations</h3>
-                    <p className={`mt-1 text-sm ${theme.muted}`}>
-                      {sorted.length} {sorted.length === 1 ? "recommendation" : "recommendations"}
-                    </p>
+                    <p className={`mt-1 text-sm ${theme.muted}`}>{sorted.length} {sorted.length === 1 ? "recommendation" : "recommendations"}</p>
                   </div>
-                  <button
-                    onClick={() => setShowAll(false)}
-                    className={`p-2.5 rounded-full border transition-all cursor-pointer ${theme.chip} hover:bg-brand/15`}
-                    aria-label="Close"
-                  >
+                  <button onClick={() => setShowAll(false)} className={`p-2.5 rounded-full border transition-all cursor-pointer ${theme.chip} hover:bg-brand/15`} aria-label="Close">
                     <X size={18} />
                   </button>
                 </div>
-
                 <div className="max-h-[70vh] overflow-y-auto p-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {sorted.map((rec, index) => (
@@ -367,12 +347,8 @@ export default function Recommendations({ theme }: RecommendationsProps) {
                     ))}
                   </div>
                 </div>
-
                 <div className={`px-6 py-4 border-t ${theme.divider}`}>
-                  <button
-                    onClick={() => setShowAll(false)}
-                    className={`inline-flex items-center gap-2 ${theme.btnGhost} cursor-pointer`}
-                  >
+                  <button onClick={() => setShowAll(false)} className={`inline-flex items-center gap-2 ${theme.btnGhost} cursor-pointer`}>
                     &larr; Back to Recommendations
                   </button>
                 </div>
@@ -384,4 +360,3 @@ export default function Recommendations({ theme }: RecommendationsProps) {
     </section>
   );
 }
-

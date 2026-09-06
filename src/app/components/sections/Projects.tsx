@@ -1,9 +1,13 @@
 ﻿import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { ChevronLeft, ChevronRight, Github, ExternalLink, Volume2, VolumeX } from "lucide-react";
+import { ChevronLeft, ChevronRight, Github, ExternalLink, Star, Volume2, VolumeX } from "lucide-react";
 import type { Theme } from "../../theme";
 import { projects, type Project } from "../../data";
 import { initSoundPrefs, isMuted, setMuted, playHover, playSelect } from "../../utils/sound";
+
+/* Learnix is the featured project — it is always the default active/front card.
+   We look it up by title so it stays featured regardless of array position. */
+const learnixStartIndex = projects.findIndex((p) => p.title === "Learnix");
 
 interface ProjectsProps {
   theme: Theme;
@@ -59,6 +63,16 @@ function ProjectCardBody({ project, isActive, theme }: { project: Project; isAct
             {project.year}
           </span>
         )}
+        {project.featured && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-brand-strong">
+            <Star size={11} /> Featured
+          </span>
+        )}
+        {project.comingSoon && (
+          <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-medium uppercase tracking-wider ${theme.chip}`}>
+            Not Available Yet
+          </span>
+        )}
       </div>
 
       <h3 className="text-xl font-bold tracking-tight sm:text-2xl">{project.title}</h3>
@@ -95,7 +109,7 @@ function ProjectCardBody({ project, isActive, theme }: { project: Project; isAct
 }
 
 export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(() => (learnixStartIndex >= 0 ? learnixStartIndex : 0));
   const [soundOn, setSoundOn] = useState<boolean>(() => (typeof window === "undefined" ? true : !isMuted()));
   const [reduced, setReduced] = useState(false);
   const touchStartX = useRef<number | null>(null);

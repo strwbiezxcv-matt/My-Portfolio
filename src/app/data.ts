@@ -25,6 +25,8 @@ import learnixProjectImg from "../imports/learnix_image.png";
 import womensMonthImg from "../imports/womens-month.png";
 import infographicsImg from "../imports/infographics.png";
 import salesTrainingCertImg from "../imports/sales-training-certificate.png";
+import mhcCertImg from "../imports/MHC CERT.png";
+import prsaCertImg from "../imports/PRSA CERT.png";
 
 /* PROJECTS (new stacked-card section)
    To add/edit a project: append an entry below. Title, category, description, and technologies are required;
@@ -41,45 +43,12 @@ export type Project = {
   githubUrl?: string;
   liveLabel?: string;
   githubLabel?: string;
+  featured?: boolean;
+  comingSoon?: boolean;
 };
 
 export const projects: Project[] = [
-  {
-    title: "TITLE",
-    category: "Embedded Systems",
-    description: "description",
-    technologies: ["Arduino", "C++", "Proteus", "3D Modeling"],
-    year: "2025",
-  },
-  {
-    title: "TITLE",
-    category: "QA & Web Testing",
-    description: "description",
-    technologies: ["Manual QA", "Responsive Testing", "Chrome DevTools"],
-    year: "2026",
-  },
-  {
-    title: "TITLE",
-    category: "Web Development",
-    description: "description",
-    technologies: ["React", "TypeScript", "Tailwind CSS", "Motion"],
-    year: "2026",
-    githubUrl: "https://github.com/strwbiezxcv-matt/My-Portfolio",
-  },
-  {
-    title: "TITLE",
-    category: "Brand & Identity",
-    description: "description",
-    technologies: ["Illustrator", "Brand Design", "Print"],
-    year: "2025",
-  },
-    {
-    title: "TITLE",
-    category: "Graphic Design",
-    description: "description",
-    technologies: ["Photoshop", "Canva", "Social Media"],
-    year: "2025",
-  },
+  // ◼ FEATURED PROJECT — Learnix is shown first and is the active/front card by default.
   {
     title: "Learnix",
     category: "AI-Powered Learning Platform",
@@ -90,6 +59,44 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/strwbiezxcv-matt/Learnix.git",
     liveLabel: "LIVE",
     githubLabel: "GITHUB",
+    featured: true,
+  },
+  // ◻ COMING SOON — these remain in the stack but only show generic COMING SOON messaging
+  //   (no real project names, categories, descriptions, technologies, or links are shown).
+  {
+    title: "PROJECT COMING SOON",
+    category: "COMING SOON",
+    description: "More projects are currently in development. Stay tuned.",
+    technologies: [],
+    comingSoon: true,
+  },
+  {
+    title: "PROJECT COMING SOON",
+    category: "COMING SOON",
+    description: "More projects are currently in development. Stay tuned.",
+    technologies: [],
+    comingSoon: true,
+  },
+  {
+    title: "PROJECT COMING SOON",
+    category: "COMING SOON",
+    description: "More projects are currently in development. Stay tuned.",
+    technologies: [],
+    comingSoon: true,
+  },
+  {
+    title: "PROJECT COMING SOON",
+    category: "COMING SOON",
+    description: "More projects are currently in development. Stay tuned.",
+    technologies: [],
+    comingSoon: true,
+  },
+  {
+    title: "PROJECT COMING SOON",
+    category: "COMING SOON",
+    description: "More projects are currently in development. Stay tuned.",
+    technologies: [],
+    comingSoon: true,
   },
 ];
 
@@ -211,12 +218,28 @@ export const seminars = [
     image: cert2Img,
   },
   {
-    title: "LikhAsenyo Creative Writing Fellowship",
+    title: "Likhasenyo: Pagbuo. Kulay. Ideya. Simula ng pagpapanday.",
     category: "Seminar",
     type: "Seminar / Talk",
     period: "Seminar",
-    description: "Completion of the LikhAsenyo creative writing and literary arts program organized by the Bicolano Student Writers' Guild.",
+    description: "Completion of the Likhasenyo creative presentation and literary arts program organized by the PRSA Guild.",
     image: likhAsenyocertImg,
+  },
+  {
+    title: "Mental Health Coalition (MHC) Certificate",
+    category: "",
+    type: "Training / Certificate",
+    period: "Certificate",
+    description: "Certificate of training and participation with the Mental Health Coalition (MHC).",
+    image: mhcCertImg,
+  },
+  {
+    title: "Public Relation and Societal Affairs (PRSA) Certificate",
+    category: "",
+    type: "Training / Certificate",
+    period: "Certificate",
+    description: "Certificate of training and participation with the Public Relation and Societal Affairs (PRSA) Committee.",
+    image: prsaCertImg,
   },
 ];
 
