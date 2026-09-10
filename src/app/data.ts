@@ -20,9 +20,10 @@ import pubmat7 from "../imports/PUBMATS_(38).png";
 import pubmat8 from "../imports/PUBMATS_(19).png";
 import pubmat9 from "../imports/ayos_lang..._(9).png";
 import pubmat10 from "../imports/man_up_speak_up_(2).png";
-import learnixImg from "../imports/learnix.png";
+import learnixImg from "../imports/LEARNIX.png";
 import learnixProjectImg from "../imports/learnix_image.png";
 import internixImg from "../imports/internix.png";
+import internixCapImg from "../imports/INTERNIX.png";
 import womensMonthImg from "../imports/womens-month.png";
 import infographicsImg from "../imports/infographics.png";
 import salesTrainingCertImg from "../imports/sales-training-certificate.png";
@@ -55,7 +56,7 @@ export const projects: Project[] = [
     category: "AI-Powered Learning Platform",
     description: "Learnix is an AI-powered learning and reviewer platform designed to help students transform their learning materials into organized reviewers, notes, quizzes, and examinations.",
     technologies: ["React", "TypeScript", "AI", "Supabase"],
-    image: learnixProjectImg,
+    image: learnixImg,
     liveUrl: "https://learnix-29i44ukrq-matt-e31f.vercel.app",
     githubUrl: "https://github.com/strwbiezxcv-matt/Learnix.git",
     liveLabel: "LIVE",
@@ -68,7 +69,7 @@ export const projects: Project[] = [
     category: "Internship Platform",
     description: "Internix is a platform designed to streamline the internship application and management process, helping students discover curated opportunities while enabling organizations to efficiently track and evaluate candidates.",
     technologies: ["React", "TypeScript", "Supabase"],
-    image: internixImg,
+    image: internixCapImg,
     liveUrl: "https://internix-h8u02klz0-matt-e31f.vercel.app",
     githubUrl: "https://github.com/strwbiezxcv-matt/Internix.git",
     liveLabel: "LIVE",
