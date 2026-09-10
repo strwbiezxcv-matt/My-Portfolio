@@ -22,7 +22,6 @@ import pubmat9 from "../imports/ayos_lang..._(9).png";
 import pubmat10 from "../imports/man_up_speak_up_(2).png";
 import learnixImg from "../imports/Learnix.png";
 import learnixProjectImg from "../imports/learnix_image.png";
-import internixImg from "../imports/internix.png";
 import internixCapImg from "../imports/Internix.png";
 import womensMonthImg from "../imports/womens-month.png";
 import infographicsImg from "../imports/infographics.png";
