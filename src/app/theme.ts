@@ -31,8 +31,8 @@ export function getTheme(isDark: boolean): Theme {
       : "bg-zinc-100 border border-gray-200",
     overlay:isDark ? "bg-[#0f1311]/0" : "bg-white/0",
     btnPrimary:isDark
-      ? "inline-flex items-center gap-2 rounded-md bg-brand-bg px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#82a055]"
-      : "inline-flex items-center gap-2 rounded-md bg-brand-bg px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#93b06b]",
+      ? "inline-flex items-center gap-2 rounded-md bg-brand-bg px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#7aa349]"
+      : "inline-flex items-center gap-2 rounded-md bg-brand-bg px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#7aa349]",
     btnGhost:isDark
       ? "inline-flex items-center gap-2 rounded-md border border-white/15 px-5 py-2.5 text-sm font-semibold text-gray-200 transition hover:border-brand/50 hover:text-brand"
       : "inline-flex items-center gap-2 rounded-md border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-brand/50 hover:text-brand",

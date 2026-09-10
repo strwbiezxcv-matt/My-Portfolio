@@ -22,6 +22,7 @@ import pubmat9 from "../imports/ayos_lang..._(9).png";
 import pubmat10 from "../imports/man_up_speak_up_(2).png";
 import learnixImg from "../imports/learnix.png";
 import learnixProjectImg from "../imports/learnix_image.png";
+import internixImg from "../imports/internix.png";
 import womensMonthImg from "../imports/womens-month.png";
 import infographicsImg from "../imports/infographics.png";
 import salesTrainingCertImg from "../imports/sales-training-certificate.png";
@@ -60,6 +61,18 @@ export const projects: Project[] = [
     liveLabel: "LIVE",
     githubLabel: "GITHUB",
     featured: true,
+  },
+    // ◻ Internix — now live with Live/GitHub buttons wired up.
+  {
+    title: "Internix",
+    category: "Internship Platform",
+    description: "Internix is a platform designed to streamline the internship application and management process, helping students discover curated opportunities while enabling organizations to efficiently track and evaluate candidates.",
+    technologies: ["React", "TypeScript", "Supabase"],
+    image: internixImg,
+    liveUrl: "https://internix-h8u02klz0-matt-e31f.vercel.app",
+    githubUrl: "https://github.com/strwbiezxcv-matt/Internix.git",
+    liveLabel: "LIVE",
+    githubLabel: "GITHUB",
   },
   // ◻ COMING SOON — these remain in the stack but only show generic COMING SOON messaging
   //   (no real project names, categories, descriptions, technologies, or links are shown).
@@ -130,7 +143,7 @@ export const pubmats = [
 export const experience = [
   {
     company: "Easecore Software and IT Corp",
-    role: "OJT Intern",
+    role: "Intenrship",
     period: "2026-2027",
     details: [
       "Hands-on experience in system testing, web development, and digital marketing.",
