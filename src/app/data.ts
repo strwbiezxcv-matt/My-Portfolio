@@ -69,7 +69,7 @@ export const projects: Project[] = [
     description: "Internix is a platform designed to streamline the internship application and management process, helping students discover curated opportunities while enabling organizations to efficiently track and evaluate candidates.",
     technologies: ["React", "TypeScript", "Supabase"],
     image: internixCapImg,
-    liveUrl: "https://internix-523r52luj-matt-e31f.vercel.app",
+    liveUrl: "https://internix-nine.vercel.app",
     githubUrl: "https://github.com/strwbiezxcv-matt/Internix.git",
     liveLabel: "LIVE",
     githubLabel: "GITHUB",
