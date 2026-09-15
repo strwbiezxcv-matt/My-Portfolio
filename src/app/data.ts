@@ -143,7 +143,7 @@ export const pubmats = [
 export const experience = [
   {
     company: "Easecore Software and IT Corp",
-    role: "Intenrship",
+    role: "Internship",
     period: "2026-2027",
     details: [
       "Hands-on experience in system testing, web development, and digital marketing.",
@@ -153,7 +153,7 @@ export const experience = [
   },
   {
     company: "Easecore Software and IT Corp",
-    role: "Part-time Graphic Artist",
+    role: "Part-time - Graphic Artist / Creative Head",
     period: "2026-2027",
     details: [
       "Assisted in designing and developing digital marketing materials.",
