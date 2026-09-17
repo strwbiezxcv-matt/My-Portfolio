@@ -1,0 +1,20 @@
+--- LAST 20 LINES ---
+                  onBlur={flushSave}
+                />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Print copy — hidden on screen (#resume-print-root), and the only
+          thing that is printed (see the @media print rules in globals.css). */}
+      {createPortal(
+        <div id="resume-print-root" aria-hidden="true">
+          <div ref={printRef} className="resume-a4 resume-a4-print" />
+        </div>,
+        document.body
+      )}
+    </motion.div>
+  );
+}

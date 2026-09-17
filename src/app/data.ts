@@ -161,6 +161,16 @@ export const experience = [
       "Assisted in planning, managing, and monitoring advertising campaigns.",
     ],
   },
+  {
+    company: "Bianzon 3Kings Aircon Repair, Cleaning, and Installation",
+    role: "Part-time",
+    period: "2020 – Present",
+    details: [
+      "Helps in assembling and installing equipment for cleaning aircons.",
+      "Provides the necessary tools for relocation, recharging freon, and installation.",
+      "Gained practical skills in troubleshooting electrical and mechanical systems.",
+    ],
+  },
 ];
 
 export const affiliations = [

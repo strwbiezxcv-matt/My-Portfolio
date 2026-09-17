@@ -1,0 +1,41 @@
+﻿--- captureSelection ---
+829: onMouseDown={captureSelection}
+841: onMouseDown={captureSelection}
+869: onMouseDown={captureSelection}
+881: onMouseDown={captureSelection}
+894: onMouseDown={captureSelection}
+906: onMouseDown={captureSelection}
+--- restoreSelection ---
+578: const range = restoreSelection();
+604: const range = restoreSelection();
+656: restoreSelection();
+669: const range = restoreSelection();
+684: const range = restoreSelection();
+--- stageHeight ---
+953: stageHeight
+954: ? { height: `${Math.round(stageHeight * scale) + STAGE_PAD * 2}px` }
+--- STAGE_PAD ---
+954: ? { height: `${Math.round(stageHeight * scale) + STAGE_PAD * 2}px` }
+--- insertNodeAtPosition ---
+471: const insertNodeAtPosition = (
+--- findMarkers ---
+494: const findMarkers = (startId: string, endId: string): Range | null => {
+--- clearMarkers ---
+510: const clearMarkers = (startId: string, endId: string) => {
+--- savedMarkers ---
+541: const savedMarkers = useRef<{ startId: string; endId: string } | null>(null);
+--- markerIdCounter ---
+462: const markerIdCounter = useRef(0);
+--- paperStage ---
+--- A4_PX_WIDTH ---
+373: const A4_PX_WIDTH = 794;
+392: const measure = () => setScale(Math.min(1, (el.clientWidth - 8) / A4_PX_WIDTH));
+960: width: `${A4_PX_WIDTH}px`,
+961: marginLeft: `calc(50% - ${A4_PX_WIDTH / 2}px)`,
+--- CLEARED_RESUME_HTML ---
+121: const CLEARED_RESUME_HTML = `
+648: paperRef.current.innerHTML = CLEARED_RESUME_HTML;
+--- DEFAULT_RESUME_HTML ---
+84: const DEFAULT_RESUME_HTML = `
+388: paper.innerHTML = readSavedResume() ?? DEFAULT_RESUME_HTML;
+640: if (paperRef.current) paperRef.current.innerHTML = DEFAULT_RESUME_HTML;

@@ -1,0 +1,6 @@
+﻿node_modules\jsdom => False
+node_modules\happy-dom => False
+node_modules\linkedom => False
+node_modules\esbuild => True
+node_modules\vite => True
+node_modules\typescript => False

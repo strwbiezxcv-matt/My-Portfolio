@@ -1,0 +1,15 @@
+﻿--- utils (recursive) ---
+utils\supabase
+utils\supabase\info.tsx
+--- supabase dir ---
+supabase\functions
+supabase\migrations
+supabase\functions\server
+supabase\functions\server\index.tsx
+supabase\functions\server\kv_store.tsx
+supabase\migrations\20260905120000_create_recommendations.sql
+supabase\migrations\20260906120000_recommendations_public_no_auth.sql
+supabase\migrations\20260906200000_remove_sample_recommendations.sql
+--- react installed ---
+react: True
+react-dom: True

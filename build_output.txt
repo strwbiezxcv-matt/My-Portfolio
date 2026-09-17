@@ -1,0 +1,45 @@
+
+> @figma/my-make-file@0.0.1 build
+> vite build
+
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:13:29). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+[2m4:12:34 PM[22m [33m[1m[vite][22m[39m [33mwarning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.[39m
+[2m4:12:34 PM[22m [33m[1m[vite][22m[39m [33mwarning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.[39m
+[33mYou or a plugin you are using have set `optimizeDeps.esbuildOptions` but this option is now deprecated. Vite now uses Rolldown to optimize the dependencies. Please use `optimizeDeps.rolldownOptions` instead.[39m
+[36mvite v8.2.1 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 2037 modules transformed.
+[31m✗[39m Build failed in 819ms
+[31merror during build:
+[31mBuild failed with 2 errors:
+
+[31m[builtin:vite-transform] [0mExpected corresponding JSX closing tag for 'div'.
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/app/components/ResumeEditor.tsx:929:9 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m777 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m<[0mdiv[38;5;249m [0m[38;5;249mc[0m[38;5;249ml[0m[38;5;249ma[0m[38;5;249ms[0m[38;5;249ms[0m[38;5;249mN[0m[38;5;249ma[0m[38;5;249mm[0m[38;5;249me[0m[38;5;249m=[0m[38;5;249m"[0m[38;5;249mf[0m[38;5;249ml[0m[38;5;249me[0m[38;5;249mx[0m[38;5;249m [0m[38;5;249mm[0m[38;5;249mi[0m[38;5;249mn[0m[38;5;249m-[0m[38;5;249mh[0m[38;5;249m-[0m[38;5;249mf[0m[38;5;249mu[0m[38;5;249ml[0m[38;5;249ml[0m[38;5;249m [0m[38;5;249mi[0m[38;5;249mt[0m[38;5;249me[0m[38;5;249mm[0m[38;5;249ms[0m[38;5;249m-[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249mj[0m[38;5;249mu[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mf[0m[38;5;249my[0m[38;5;249m-[0m[38;5;249mc[0m[38;5;249me[0m[38;5;249mn[0m[38;5;249mt[0m[38;5;249me[0m[38;5;249mr[0m[38;5;249m [0m[38;5;249mp[0m[38;5;249m-[0m[38;5;249m4[0m[38;5;249m"[0m[38;5;249m>[0m
+ [38;5;240m    │[0m        ─┬─  
+ [38;5;240m    │[0m         ╰─── Opened here
+ [38;5;240m    │[0m 
+ [38;5;246m929 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m<[0m[38;5;249m/[0mmotion.div[38;5;249m>[0m
+ [38;5;240m    │[0m         ─────┬────  
+ [38;5;240m    │[0m              ╰────── Expected `</div>`
+[38;5;246m─────╯[0m
+
+[31m[builtin:vite-transform] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/app/components/ResumeEditor.tsx:931:3 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m931 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249m}[0m
+ [38;5;240m    │[0m   │ 
+ [38;5;240m    │[0m   ╰─ 
+[38;5;246m─────╯[0m
+[31m
+    at aggregateBindingErrorsIntoJsError (file:///C:/Users/Matt/node_modules/rolldown/dist/shared/error-CVc7IgvG.mjs:48:18)
+    at unwrapBindingResult (file:///C:/Users/Matt/node_modules/rolldown/dist/shared/error-CVc7IgvG.mjs:18:128)
+    at #build (file:///C:/Users/Matt/node_modules/rolldown/dist/shared/rolldown-DiYVDns9.mjs:132:34)
+    at async buildEnvironment (file:///C:/Users/Matt/node_modules/vite/dist/node/chunks/node.js:33730:66)
+    at async Object.build (file:///C:/Users/Matt/node_modules/vite/dist/node/chunks/node.js:34150:19)
+    at async Object.buildApp (file:///C:/Users/Matt/node_modules/vite/dist/node/chunks/node.js:34147:153)
+    at async CAC.<anonymous> (file:///C:/Users/Matt/node_modules/vite/dist/node/cli.js:776:3) {
+  errors: [Getter/Setter]
+}[39m

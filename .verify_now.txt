@@ -1,0 +1,38 @@
+lines=1001
+bytes=40706
+lastWrite=2026-09-17 14:40:24Z
+md5=8B6F8A5E5F9588C6C82C4B3E5E78BD2E
+--- definitions ---
+  131: function exec(cmd: string, value?: string) {
+  430: const persist = (): boolean => {
+  435: const runSave = (showNote: boolean) => {
+  443: const schedulePersist = () => {
+  453: const flushSave = () => {
+  528: const updateLastCaretBlock = () => {
+  549: const syncFormats = () => {
+  581: const applyFormat = (kind: string, value: string) => {
+  607: const toggleInline = (cmd: string, prop: string, onValue: string, offValue: string) => {
+  629: const handlePrint = () => {
+  637: const handleSave = () => {
+  641: const handleReset = () => {
+  649: const handleClear = () => {
+  659: const withFocus = (fn: () => void) => {
+  672: const alignTo = (value: string) => {
+  687: const indentBy = (dir: 1 | -1) => {
+  718: const addSection = () => {
+  724: const removeSection = () => {
+  738: const moveSection = (dir: -1 | 1) => {
+  767: const btn = (title: string, icon: React.ReactNode, fn: () => void) => (
+--- jsx tails ---
+
+      {/* Print copy — hidden on screen (#resume-print-root), and the only
+          thing that is printed (see the @media print rules in globals.css). */}
+      {createPortal(
+        <div id="resume-print-root" aria-hidden="true">
+          <div ref={printRef} className="resume-a4 resume-a4-print" />
+        </div>,
+        document.body
+      )}
+    </motion.div>
+  );
+}

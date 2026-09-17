@@ -41,7 +41,7 @@ export default function Contact({ theme, onNavigate, onViewWork }: ContactProps)
         >
           <div className="mb-4 flex items-center justify-center gap-3">
             <span className="section-num-rule" />
-            <span className="section-num">07 · CONTACT</span>
+            <span className="section-num">09 · CONTACT</span>
             <span className="section-num-rule" />
           </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">

@@ -1,0 +1,13 @@
+﻿582| const range = restoreSelection();
+608| const range = restoreSelection();
+660| restoreSelection();
+673| const range = restoreSelection();
+688| const range = restoreSelection();
+833| onMouseDown={captureSelection}
+845| onMouseDown={captureSelection}
+873| onMouseDown={captureSelection}
+885| onMouseDown={captureSelection}
+898| onMouseDown={captureSelection}
+910| onMouseDown={captureSelection}
+957| stageHeight
+958| ? { height: `${Math.round(stageHeight * scale) + STAGE_PAD * 2}px` }

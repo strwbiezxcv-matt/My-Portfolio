@@ -1,0 +1,44 @@
+                  ? { height: `${Math.round(stageHeight * scale) + STAGE_PAD * 2}px` }
+                  : undefined
+              }
+            >
+              <div
+                style={{
+                  width: `${A4_PX_WIDTH}px`,
+                  marginLeft: `calc(50% - ${A4_PX_WIDTH / 2}px)`,
+                  transform: `scale(${scale})`,
+                  transformOrigin: "top center",
+                }}
+              >
+                <div
+                  ref={paperRef}
+                  className="resume-a4"
+                  contentEditable
+                  suppressContentEditableWarning
+                  spellCheck={false}
+                  role="textbox"
+                  aria-multiline="true"
+                  aria-label="Editable resume page"
+                  onInput={schedulePersist}
+                  onKeyUp={syncFormats}
+                  onMouseUp={syncFormats}
+                  onFocus={updateLastCaretBlock}
+                  onBlur={flushSave}
+                />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Print copy — hidden on screen (#resume-print-root), and the only
+          thing that is printed (see the @media print rules in globals.css). */}
+      {createPortal(
+        <div id="resume-print-root" aria-hidden="true">
+          <div ref={printRef} className="resume-a4 resume-a4-print" />
+        </div>,
+        document.body
+      )}
+    </motion.div>
+  );
+}

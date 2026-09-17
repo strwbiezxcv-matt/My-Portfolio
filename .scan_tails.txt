@@ -1,0 +1,78 @@
+﻿===== .tmp_resume_state.txt : 925 lines =====
+                ))}
+              </select>
+              <select
+                className={selectCls()}
+                title="Indentation"
+                onMouseDown={captureSelection}
+                defaultValue=""
+                onChange={(e) => {
+                  if (e.target.value) applyFormat("blockIndent", e.target.value);
+                  e.target.value = "";
+                }}
+              >
+                <option value="" disabled>Indent (left/right)</option>
+                <option value="marginLeft:0px">Left indent: none</option>
+                <option value="marginLeft:12px">Left indent: +12px</option>
+                <option value="marginLeft:24px">Left indent: +24px</option>
+                <option value="marginLeft:48px">Left indent: +48px</option>
+                <option value="marginRight:12px">Right indent: +12px</option>
+                <option value="marginRight:24px">Right indent: +24px</option>
+                <option value="marginRight:48px">Right indent: +48px</option>
+              </select>
+              <Divider theme={theme} />
+              {btn("Add divider line", <Minus size={15} />, () =>
+                exec("insertHTML", '<hr style="border:none;border-top:1px solid #9ca3af;margin:6px 0" />')
+
+===== clean_resume.txt : 926 lines =====
+              </select>
+              <select
+                className={selectCls()}
+                title="Indentation"
+                onMouseDown={captureSelection}
+                defaultValue=""
+                onChange={(e) => {
+                  if (e.target.value) applyFormat("blockIndent", e.target.value);
+                  e.target.value = "";
+                }}
+              >
+                <option value="" disabled>Indent (left/right)</option>
+                <option value="marginLeft:0px">Left indent: none</option>
+                <option value="marginLeft:12px">Left indent: +12px</option>
+                <option value="marginLeft:24px">Left indent: +24px</option>
+                <option value="marginLeft:48px">Left indent: +48px</option>
+                <option value="marginRight:12px">Right indent: +12px</option>
+                <option value="marginRight:24px">Right indent: +24px</option>
+                <option value="marginRight:48px">Right indent: +48px</option>
+              </select>
+              <Divider theme={theme} />
+              {btn("Add divider line", <Minus size={15} />, () =>
+                exec("insertHTML", '<hr style="border:none;border-top:1px solid #9ca3af;margin:6px 0" />')
+
+
+===== resume_temp.txt : 243 lines =====
+  if (!start) start = (root.firstElementChild as HTMLElement) ?? block;
+  let end: HTMLElement | null = null;
+  el = start.nextElementSibling as HTMLElement | null;
+  while (el) {
+    if (el.classList.contains("rsec")) { end = el; break; }
+    el = el.nextElementSibling as HTMLElement | null;
+  }
+  return { start, end };
+}
+
+/* ── Toolbar primitives ────────────────────────────────────────── */
+
+const FONT_OPTIONS = [
+  { label: "Inter", value: "Inter, sans-serif" },
+  { label: "Arial", value: "Arial, sans-serif" },
+  { label: "Times New Roman", value: "'Times New Roman', serif" },
+  { label: "Georgia", value: "Georgia, serif" },
+  { label: "Calibri", value: "Calibri, sans-serif" },
+  { label: "Courier New", value: "'Courier New', monospace" },
+];
+const SIZE_OPTIONS = ["8pt", "9pt", "10pt", "10.5pt", "11pt", "12pt", "14pt", "16pt", "18pt", "24pt"];
+const LINE_OPTIONS = ["1", "1.15", "1.3", "1.5", "1.75", "2"];
+const LS_OPTIONS = ["0.5px", "1px", "2px"];
+
+

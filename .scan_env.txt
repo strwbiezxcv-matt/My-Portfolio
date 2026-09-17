@@ -1,0 +1,4 @@
+﻿node: v24.18.0
+npm: 
+node_modules: True
+utils/supabase/info.tsx: True

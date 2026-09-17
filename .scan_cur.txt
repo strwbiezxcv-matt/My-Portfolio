@@ -1,0 +1,12 @@
+chars=43285
+lines=1078
+const restoreSelection => 1
+captureSelection = => 1
+const captureSelection => 1
+const stageHeight => 0
+stageHeight => 3
+STAGE_PAD => 2
+resume-a4 => 3
+printRef => 4
+createPortal => 2
+id="resume-print-root" => 1

@@ -1,0 +1,14 @@
+src/app/components/ResumeEditor.tsx(582,19): error TS2552: Cannot find name 'restoreSelection'. Did you mean 'getSelection'?
+src/app/components/ResumeEditor.tsx(608,19): error TS2552: Cannot find name 'restoreSelection'. Did you mean 'getSelection'?
+src/app/components/ResumeEditor.tsx(660,5): error TS2552: Cannot find name 'restoreSelection'. Did you mean 'getSelection'?
+src/app/components/ResumeEditor.tsx(673,19): error TS2552: Cannot find name 'restoreSelection'. Did you mean 'getSelection'?
+src/app/components/ResumeEditor.tsx(688,19): error TS2552: Cannot find name 'restoreSelection'. Did you mean 'getSelection'?
+src/app/components/ResumeEditor.tsx(833,30): error TS2304: Cannot find name 'captureSelection'.
+src/app/components/ResumeEditor.tsx(845,30): error TS2304: Cannot find name 'captureSelection'.
+src/app/components/ResumeEditor.tsx(873,30): error TS2304: Cannot find name 'captureSelection'.
+src/app/components/ResumeEditor.tsx(885,30): error TS2304: Cannot find name 'captureSelection'.
+src/app/components/ResumeEditor.tsx(898,30): error TS2304: Cannot find name 'captureSelection'.
+src/app/components/ResumeEditor.tsx(910,30): error TS2304: Cannot find name 'captureSelection'.
+src/app/components/ResumeEditor.tsx(957,17): error TS2304: Cannot find name 'stageHeight'.
+src/app/components/ResumeEditor.tsx(958,45): error TS2304: Cannot find name 'stageHeight'.
+src/main.tsx(3,19): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.

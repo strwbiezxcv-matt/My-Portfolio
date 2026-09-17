@@ -1,0 +1,26 @@
+--- captureSelection occurrences ---
+833: onMouseDown={captureSelection}
+845: onMouseDown={captureSelection}
+873: onMouseDown={captureSelection}
+885: onMouseDown={captureSelection}
+898: onMouseDown={captureSelection}
+910: onMouseDown={captureSelection}
+--- restoreSelection occurrences ---
+582: const range = restoreSelection();
+608: const range = restoreSelection();
+660: restoreSelection();
+673: const range = restoreSelection();
+688: const range = restoreSelection();
+--- savedMarkers occurrences ---
+405: const onSelectionChange = () => {
+409: savedRange.current = sel.getRangeAt(0).cloneRange();
+413: document.addEventListener("selectionchange", onSelectionChange);
+416: document.removeEventListener("selectionchange", onSelectionChange);
+524: cannot be restored). Updated on every selectionchange while the
+544: const savedRange = useRef<Range | null>(null);
+545: const savedMarkers = useRef<{ startId: string; endId: string } | null>(null);
+623: savedRange.current = sel.getRangeAt(0).cloneRange();
+665: savedRange.current = sel.getRangeAt(0).cloneRange();
+679: savedRange.current = sel.getRangeAt(0).cloneRange();
+705: savedRange.current = sel.getRangeAt(0).cloneRange();
+713: if (savedRange.current) return savedRange.current.startContainer;

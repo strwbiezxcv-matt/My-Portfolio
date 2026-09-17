@@ -1,0 +1,101 @@
+﻿--- build script ---
+
+    "build": "vite build",
+--- sibling dirs ---
+1ST YEAR
+202608_a
+2ND YEAR
+3RD YEAR
+4TH YEAR
+A4 TEASER
+Adobe CC 2020
+all logo of clients
+ArmouryCrateInstallTool
+ATTACKSHARKX66
+BRANDING
+BRANDING (1)
+BRANDING (10)
+BRANDING (12)
+BRANDING (2)
+BRANDING (3)
+BRANDING (4)
+BRANDING (5)
+BRANDING (6)
+BRANDING (7)
+BRANDING (8)
+BRANDING (9)
+BSCPE 3B (2)
+BULSUONE PRIMER 2024.pdf
+COE
+COE (1)
+COE (2)
+COE TO POST (1)
+College of Engineering Pubmats (2026-2027)
+CPE 4A GRADUATES
+CPE 4B GRADUATES
+Creative Portfolio Design (1)
+Creative Portfolio Design (2)
+Creative Portfolio Design (3)
+Creative%20Portfolio%20Design%20%281%29%20-%20FIXED
+dhevc by guelami
+dhevc posting
+drive-download-20250618T083116Z-1-001
+drive-download-20250826T225628Z-1-001
+Easecore Company ID Card  (55 x 85 mm)
+ESPnowV3_Master
+ESPnowV3_Slave
+flame_sensor_activity_copy_20260128142925
+galvan-windows
+gc photo sadc (1)
+Green and Black Dynamic Basketball T-Shirt
+Green and White Modern Land Plot Sale Promotion Instagram Post
+Green Brown and Beige Bible Verse Desktop Wallpaper
+Green Brown and Beige Bible Verse Desktop Wallpaper (1)
+I2C_Address_Finder
+I2C_LCD_Code
+ICEPEP PUBMATS (1)
+ICEPEP PUBMATS (2)
+IE 4A GRADUATES
+IE 4B GRADUATES
+ilovepdf_jpg-to-pdf (1)
+ilovepdf_pages-to-jpg (2)
+ilovepdf_pages-to-jpg (2) - Copy
+ilovepdf_pages-to-jpg (3)
+ilovepdf_pages-to-jpg (4)
+ilovepdf_pages-to-jpg (5)
+ilovepdf_pages-to-jpg (6)
+jcalendar-1.4
+LiquidCrystal_I2C-1.1.2
+LOGO HEADER
+Meet - ipu-brkh-ddq_files
+MEMORANDUMEOORDERS
+MEMORANDUMEOORDERS (1)
+MHC MEMBERS NEW
+mysql-connector-j-9.3.0
+ngrok-v3-stable-windows-arm64
+niggaausten
+niggaausten2
+part1
+part2
+pololu-cp2102-windows-220616
+PORTFOLIO LOGOS
+PROJECT 2
+Project Backups
+Proteus 8.13
+PyroSense_V1
+Red White and Black Modern Sports Presentation
+RESUME (1)
+SADC
+SADC (1)
+SADC (2)
+signage 3b
+sketch-dice
+Training Completion Certificate
+Training Completion Certificate (1)
+Untitled design
+White and Orange Modern Workplace Safety Presentation
+wps_download
+--- line count ---
+997
+
+

@@ -1,0 +1,37 @@
+﻿80: const H_STYLE =
+90: <h2 ${H_STYLE}>PROFESSIONAL SUMMARY</h2>
+92: <h2 ${H_STYLE}>WORK EXPERIENCE</h2>
+101: <h2 ${H_STYLE}>EDUCATION</h2>
+106: <h2 ${H_STYLE}>SKILLS</h2>
+112: <h2 ${H_STYLE}>PROJECTS</h2>
+115: <h2 ${H_STYLE}>CERTIFICATIONS</h2>
+117: <h2 ${H_STYLE}>AFFILIATIONS</h2>
+121: const CLEARED_RESUME_HTML = `
+131: function exec(cmd: string, value?: string) {
+153: function blocksInRange(root: HTMLElement, range: Range): HTMLElement[] {
+161: function applyBlocksStyle(root: HTMLElement, range: Range, prop: string, value: string) {
+162: const targets = blocksInRange(root, range);
+264: function applyInlineToRange(root: HTMLElement, range: Range, styles: Record<string, string>): boolean {
+272: function inlineStateOfRange(range: Range): { bold: boolean; italic: boolean; underline: boolean } {
+578: const range = restoreSelection();
+583: if (!applyInlineToRange(paper, range, { [prop]: v })) {
+584: applyBlocksStyle(paper, range, prop, v);
+590: else if (kind === "lineHeight") applyBlocksStyle(paper, range, "lineHeight", value);
+591: else if (kind === "paragraphSpacing") applyBlocksStyle(paper, range, "marginBottom", value);
+594: if (idx > 0) applyBlocksStyle(paper, range, value.slice(0, idx), value.slice(idx + 1));
+604: const range = restoreSelection();
+607: const currentlyOn = inlineStateOfRange(range)[prop === "fontWeight" ? "bold" : prop === "fontStyle" ? "italic" : "underline"];
+614: applyInlineToRange(paper, range, { [prop]: targetValue });
+648: paperRef.current.innerHTML = CLEARED_RESUME_HTML;
+656: restoreSelection();
+669: const range = restoreSelection();
+672: applyBlocksStyle(paper, range, "textAlign", value);
+684: const range = restoreSelection();
+687: const blocks = blocksInRange(paper, range);
+716: exec("insertHTML", `<h2 ${H_STYLE}>NEW SECTION</h2><hr style="border:none;border-top:1px solid #9ca3af;margin:6px 0" /><p ${P_STYLE}>Section content...</p>`)
+829: onMouseDown={captureSelection}
+841: onMouseDown={captureSelection}
+869: onMouseDown={captureSelection}
+881: onMouseDown={captureSelection}
+894: onMouseDown={captureSelection}
+906: onMouseDown={captureSelection}

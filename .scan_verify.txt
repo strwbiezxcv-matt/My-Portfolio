@@ -1,0 +1,19 @@
+﻿bytes=37777
+chars=37242
+lines=932
+has_resumeA4=False
+has_contentEditable=False
+has_printRef_jsx=False
+TAIL>>> <Minus size={15} />, () =>
+                exec("insertHTML", '<hr style="border:none;border-top:1px solid #9ca3af;margin:6px 0" />')
+              )}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
+    );
+}
+
+HEADLINES>>>
+import { useEffect, useRef, useState } from "react";|import { createPortal } from "react-dom";|import { motion } from "motion/react";|import {

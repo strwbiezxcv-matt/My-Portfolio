@@ -1,0 +1,329 @@
+362|   return <span className={`mx-1 inline-block h-5 w-px align-middle ${theme.divider}`} />;
+363| }
+364| 
+365| /* ── Main modal ────────────────────────────────────────────────── */
+366| 
+367| interface ResumeEditorProps {
+368|   theme: Theme;
+369|   onClose: () => void;
+370| }
+371| 
+372| /* 210mm ≈ 794px at 96dpi — used for scaling the preview. */
+373| const A4_PX_WIDTH = 794;
+374| 
+375| export default function ResumeEditor({ theme, onClose }: ResumeEditorProps) {
+376|   const paperRef = useRef<HTMLDivElement>(null);
+377|   const printRef = useRef<HTMLDivElement>(null);
+378|   const wrapRef = useRef<HTMLDivElement>(null);
+379|   const [scale, setScale] = useState(1);
+380|   const [savedNote, setSavedNote] = useState("");
+381|   const persistTimer = useRef<number | null>(null);
+382| 
+383|   /* Load this browser's saved resume (or the default template), and
+384|      scale the preview to the container. */
+385|   useEffect(() => {
+386|     const paper = paperRef.current;
+387|     if (paper && !paper.innerHTML.trim()) {
+388|       paper.innerHTML = readSavedResume() ?? DEFAULT_RESUME_HTML;
+389|     }
+390|     const el = wrapRef.current;
+391|     if (!el) return;
+392|     const measure = () => setScale(Math.min(1, (el.clientWidth - 8) / A4_PX_WIDTH));
+393|     measure();
+394|     const ro = new ResizeObserver(measure);
+395|     ro.observe(el);
+396|     /* Save pending changes before refresh / navigation / tab close. */
+397|     window.addEventListener("pagehide", flushSave);
+398|     window.addEventListener("beforeunload", flushSave);
+399|     /* Track the live selection inside the paper: keeps the last range
+400|        for toolbar use and keeps the dropdowns in sync with formatting. */
+401|     const onSelectionChange = () => {
+402|       const paper = paperRef.current;
+403|       const sel = window.getSelection();
+404|       if (paper && sel && sel.rangeCount > 0 && paper.contains(sel.anchorNode)) {
+405|         savedRange.current = sel.getRangeAt(0).cloneRange();
+406|         syncFormats();
+407|       }
+408|     };
+409|     document.addEventListener("selectionchange", onSelectionChange);
+410|     return () => {
+411|       ro.disconnect();
+412|       document.removeEventListener("selectionchange", onSelectionChange);
+413|       /* Flush pending auto-saves when the editor unmounts (closed). */
+414|       if (persistTimer.current) {
+415|         window.clearTimeout(persistTimer.current);
+416|         persistTimer.current = null;
+417|         persist();
+418|       }
+419|       window.removeEventListener("pagehide", flushSave);
+420|       window.removeEventListener("beforeunload", flushSave);
+421|     };
+422|   }, []);
+423| 
+424|   /* Auto-save: every change (typing, formatting, structure) is persisted
+425|      to this browser's localStorage with a short debounce. */
+426|   const persist = (): boolean => {
+427|     if (!paperRef.current) return false;
+428|     return writeSavedResume(paperRef.current.innerHTML);
+429|   };
+430| 
+431|   const runSave = (showNote: boolean) => {
+432|     const ok = persist();
+433|     if (showNote) {
+434|       setSavedNote(ok ? "Saved" : "Couldn't save locally");
+435|       if (ok) window.setTimeout(() => setSavedNote(""), 2000);
+436|     }
+437|   };
+438| 
+439|   const schedulePersist = () => {
+440|     setSavedNote("Saving…");
+441|     if (persistTimer.current) window.clearTimeout(persistTimer.current);
+442|     persistTimer.current = window.setTimeout(() => {
+443|       persistTimer.current = null;
+444|       runSave(true);
+445|     }, 300);
+446|   };
+447| 
+448|   /* Save immediately (used before printing, unloading, closing). */
+449|   const flushSave = () => {
+450|     if (persistTimer.current) {
+451|       window.clearTimeout(persistTimer.current);
+452|       persistTimer.current = null;
+453|     }
+454|     persist();
+455|   };
+456| 
+457|   /* ── Selection preservation via DOM markers ─────────────────────
+458|      Markers are inserted at the selection boundaries and survive DOM
+459|      mutations caused by formatting ops. Selection is saved&restored via
+460|      marker positions rather than live Range references (which go stale). */
+768| 
+769|   return (
+770|     <motion.div
+771|       initial={{ opacity: 0 }}
+772|       animate={{ opacity: 1 }}
+773|       exit={{ opacity: 0 }}
+774|       className="resume-editor-shell fixed inset-0 z-[100] overflow-y-auto"
+775|       onClick={onClose}
+776|     >
+777|       <div className="flex min-h-full items-start justify-center p-4">
+778|         <motion.div
+779|           initial={{ scale: 0.95, opacity: 0, y: 20 }}
+780|           animate={{ scale: 1, opacity: 1, y: 0 }}
+781|           exit={{ scale: 0.95, opacity: 0, y: 20 }}
+782|           transition={{ type: "spring", damping: 26 }}
+783|           className={`relative w-full max-w-5xl rounded-2xl shadow-2xl ${theme.card}`}
+784|           onClick={(e) => e.stopPropagation()}
+785|         >
+786|           {/* Header */}
+787|           <div className={`flex flex-wrap items-center justify-between gap-3 border-b px-6 py-4 ${theme.divider}`}>
+788|             <div>
+789|               <h3 className="text-xl font-bold tracking-tight">Resume Template</h3>
+790|               <p className={`text-xs mt-0.5 ${theme.muted}`}>
+791|                 Edit directly on the A4 page — select text to format it. No account needed.
+792|               </p>
+793|             </div>
+794|             <div className="flex flex-wrap items-center gap-2">
+795|               {savedNote && (
+796|                 <span
+797|                   className={`text-xs font-medium ${
+798|                     savedNote.startsWith("Couldn't") ? "text-red-500" : theme.icon
+799|                   }`}
+800|                   aria-live="polite"
+801|                 >
+802|                   {savedNote}
+803|                 </span>
+804|               )}
+805|               <motion.button
+806|                 whileHover={{ scale: 1.04 }}
+807|                 whileTap={{ scale: 0.97 }}
+808|                 onClick={handlePrint}
+809|                 className={`inline-flex cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white will-change-transform ${theme.btnPrimary}`}
+810|               >
+811|                 <Printer size={16} /> Print Resume
+812|               </motion.button>
+813|               <button
+814|                 onClick={onClose}
+815|                 className={`p-2.5 rounded-full border transition-all cursor-pointer ${theme.chip} hover:bg-brand/15`}
+816|                 aria-label="Close resume editor"
+817|               >
+818|                 <X size={20} />
+819|               </button>
+820|             </div>
+821|           </div>
+822| 
+823|           {/* Formatting toolbar */}
+824|           <div className={`border-b px-4 py-3 ${theme.divider}`}>
+825|             <div className="flex flex-wrap items-center gap-1.5">
+826|               <select
+827|                 className={selectCls(true)}
+828|                 title="Font family"
+829|                 onMouseDown={captureSelection}
+830|                 value={activeFormats.font ?? ""}
+831|                 onChange={(e) => applyFormat("font", e.target.value)}
+832|               >
+833|                 <option value="" disabled>Font</option>
+834|                 {FONT_OPTIONS.map((f) => (
+835|                   <option key={f.label} value={f.value}>{f.label}</option>
+836|                 ))}
+837|               </select>
+838|               <select
+839|                 className={selectCls()}
+840|                 title="Font size"
+841|                 onMouseDown={captureSelection}
+842|                 value={activeFormats.size ?? ""}
+843|                 onChange={(e) => applyFormat("size", e.target.value)}
+844|               >
+845|                 <option value="" disabled>Size</option>
+846|                 {SIZE_OPTIONS.map((s) => (
+847|                   <option key={s} value={s}>{s}</option>
+848|                 ))}
+849|               </select>
+850|               <Divider theme={theme} />
+851|               {btn("Bold", <Bold size={15} />, () => toggleInline("bold", "fontWeight", "700", "400"))}
+852|               {btn("Italic", <Italic size={15} />, () => toggleInline("italic", "fontStyle", "italic", "normal"))}
+853|               {btn("Underline", <Underline size={15} />, () =>
+854|                 toggleInline("underline", "textDecoration", "underline", "none")
+855|               )}
+856|               <Divider theme={theme} />
+857|               {btn("Align left", <AlignLeft size={15} />, () => alignTo("left"))}
+858|               {btn("Align center", <AlignCenter size={15} />, () => alignTo("center"))}
+859|               {btn("Align right", <AlignRight size={15} />, () => alignTo("right"))}
+860|               {btn("Justify", <AlignJustify size={15} />, () => alignTo("justify"))}
+861|               <Divider theme={theme} />
+862|               {btn("Bullet list", <List size={15} />, () => exec("insertUnorderedList"))}
+863|               {btn("Decrease indent", <Outdent size={15} />, () => indentBy(-1))}
+864|               {btn("Increase indent", <Indent size={15} />, () => indentBy(1))}
+865|               <Divider theme={theme} />
+866|               <select
+867|                 className={selectCls()}
+868|                 title="Line spacing"
+869|                 onMouseDown={captureSelection}
+870|                 value={activeFormats.lineHeight ?? ""}
+871|                 onChange={(e) => applyFormat("lineHeight", e.target.value)}
+872|               >
+873|                 <option value="" disabled>Line spacing</option>
+874|                 {LINE_OPTIONS.map((v) => (
+875|                   <option key={v} value={v}>{v}</option>
+876|                 ))}
+877|               </select>
+878|               <select
+879|                 className={selectCls()}
+880|                 title="Letter spacing"
+881|                 onMouseDown={captureSelection}
+882|                 value={activeFormats.letterSpacing ?? ""}
+883|                 onChange={(e) => applyFormat("letterSpacing", e.target.value)}
+884|               >
+885|                 <option value="" disabled>Letter spacing</option>
+886|                 <option value="normal">Normal</option>
+887|                 <option value="0.5px">+0.5px</option>
+888|                 <option value="1px">+1px</option>
+889|                 <option value="2px">+2px</option>
+890|               </select>
+891|               <select
+892|                 className={selectCls()}
+893|                 title="Paragraph spacing"
+894|                 onMouseDown={captureSelection}
+895|                 defaultValue=""
+896|                 onChange={(e) => applyFormat("paragraphSpacing", e.target.value)}
+897|               >
+898|                 <option value="" disabled>Paragraph spacing</option>
+899|                 {["0px", "2px", "4px", "8px", "12px", "16px"].map((v) => (
+900|                   <option key={v} value={v}>{v}</option>
+901|                 ))}
+902|               </select>
+903|               <select
+904|                 className={selectCls()}
+905|                 title="Indentation"
+906|                 onMouseDown={captureSelection}
+907|                 defaultValue=""
+908|                 onChange={(e) => {
+909|                   if (e.target.value) applyFormat("blockIndent", e.target.value);
+910|                   e.target.value = "";
+911|                 }}
+912|               >
+913|                 <option value="" disabled>Indent (left/right)</option>
+914|                 <option value="marginLeft:0px">Left indent: none</option>
+915|                 <option value="marginLeft:12px">Left indent: +12px</option>
+916|                 <option value="marginLeft:24px">Left indent: +24px</option>
+917|                 <option value="marginLeft:48px">Left indent: +48px</option>
+918|                 <option value="marginRight:12px">Right indent: +12px</option>
+919|                 <option value="marginRight:24px">Right indent: +24px</option>
+920|                 <option value="marginRight:48px">Right indent: +48px</option>
+921|               </select>
+922|               <Divider theme={theme} />
+923|               {btn("Add divider line", <Minus size={15} />, () =>
+924|                 exec("insertHTML", '<hr style="border:none;border-top:1px solid #9ca3af;margin:6px 0" />')
+925|               )}
+926|             </div>
+927|             {/* Document-level actions (save / reset / clear / sections) */}
+928|             <div className="mt-2 flex flex-wrap items-center gap-1.5">
+929|               <ToolBtn title="Save resume" theme={theme} onClick={handleSave}>
+930|                 <Save size={15} />
+931|               </ToolBtn>
+932|               <ToolBtn title="Reset template" theme={theme} onClick={handleReset}>
+933|                 <RotateCcw size={15} />
+934|               </ToolBtn>
+935|               <ToolBtn title="Clear content" theme={theme} onClick={handleClear}>
+936|                 <Eraser size={15} />
+937|               </ToolBtn>
+938|               <Divider theme={theme} />
+939|               {btn("Add section", <Plus size={15} />, addSection)}
+940|               {btn("Delete section", <Trash2 size={15} />, removeSection)}
+941|               {btn("Move section up", <ArrowUp size={15} />, () => moveSection(-1))}
+942|               {btn("Move section down", <ArrowDown size={15} />, () => moveSection(1))}
+943|             </div>
+944|           </div>
+945| 
+946|           {/* A4 page. The preview is scaled down to fit narrow screens while
+947|               the saved/printed markup always stays true A4 size. */}
+948|           <div className="px-4 py-5 sm:px-6">
+949|             <div
+950|               ref={wrapRef}
+951|               className="relative w-full overflow-hidden"
+952|               style={
+953|                 stageHeight
+954|                   ? { height: `${Math.round(stageHeight * scale) + STAGE_PAD * 2}px` }
+955|                   : undefined
+956|               }
+957|             >
+958|               <div
+959|                 style={{
+960|                   width: `${A4_PX_WIDTH}px`,
+961|                   marginLeft: `calc(50% - ${A4_PX_WIDTH / 2}px)`,
+962|                   transform: `scale(${scale})`,
+963|                   transformOrigin: "top center",
+964|                 }}
+965|               >
+966|                 <div
+967|                   ref={paperRef}
+968|                   className="resume-a4"
+969|                   contentEditable
+970|                   suppressContentEditableWarning
+971|                   spellCheck={false}
+972|                   role="textbox"
+973|                   aria-multiline="true"
+974|                   aria-label="Editable resume page"
+975|                   onInput={schedulePersist}
+976|                   onKeyUp={syncFormats}
+977|                   onMouseUp={syncFormats}
+978|                   onFocus={updateLastCaretBlock}
+979|                   onBlur={flushSave}
+980|                 />
+981|               </div>
+982|             </div>
+983|           </div>
+984|         </motion.div>
+985|       </div>
+986| 
+987|       {/* Print copy — hidden on screen (#resume-print-root), and the only
+988|           thing that is printed (see the @media print rules in globals.css). */}
+989|       {createPortal(
+990|         <div id="resume-print-root" aria-hidden="true">
+991|           <div ref={printRef} className="resume-a4 resume-a4-print" />
+992|         </div>,
+993|         document.body
+994|       )}
+995|     </motion.div>
+996|   );
+997| }

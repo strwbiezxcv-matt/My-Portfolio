@@ -1,0 +1,100 @@
+﻿
+Mode   Length Name                    
+----   ------ ----                    
+d-----        .agent-cache            
+d--h--        .git                    
+d-----        dist                    
+d-----        node_modules            
+d-----        public                  
+d-----        src                     
+d-----        supabase                
+d-----        utils                   
+-a---- 0      $null                   
+-a---- 307    .env.example            
+-a---- 46     .gitignore              
+-a---- 2690   .scan_assets.txt        
+-a---- 4445   .scan_build.txt         
+-a---- 4093   .scan_build2.txt        
+-a---- 4106   .scan_build3.txt        
+-a---- 4093   .scan_build_now.txt     
+-a---- 348    .scan_bundles.txt       
+-a---- 3510   .scan_bundle_ctx.txt    
+-a---- 401    .scan_bytes.txt         
+-a---- 8      .scan_count.txt         
+-a---- 894    .scan_defs.txt          
+-a---- 1408   .scan_deps.txt          
+-a---- 586    .scan_dirs.txt          
+-a---- 3741   .scan_dist.txt          
+-a---- 77     .scan_env.txt           
+-a---- 3107   .scan_files.txt         
+-a---- 1505   .scan_git.txt           
+-a---- 3436   .scan_grep.txt          
+-a---- 0      .scan_head_resume.tsx   
+-a---- 2150   .scan_helpers.txt       
+-a---- 2843   .scan_ids.txt           
+-a---- 750    .scan_imports.txt       
+-a---- 4751   .scan_list.txt          
+-a---- 4751   .scan_list2.txt         
+-a---- 30     .scan_oldbundle_hits.txt
+-a---- 234    .scan_oldbundle_keys.txt
+-a---- 7155   .scan_oldctx.txt        
+-a---- 340160 .scan_old_bundle.js     
+-a---- 4505   .scan_old_ctx.txt       
+-a---- 208    .scan_orig.txt          
+-a---- 255    .scan_re.txt            
+-a---- 1025   .scan_resume_tail.txt   
+-a---- 0      .scan_root.txt          
+-a---- 6089   .scan_siblings.txt      
+-a---- 523    .scan_size.txt          
+-a---- 30954  .scan_src2.txt          
+-a---- 6162   .scan_srcfiles.txt      
+-a---- 1371   .scan_tail.txt          
+-a---- 490    .scan_tail2.txt         
+-a---- 3760   .scan_tails.txt         
+-a---- 1360   .scan_tail_resume.txt   
+-a---- 427    .scan_times.txt         
+-a---- 6499   .scan_ts.txt            
+-a---- 69     .scan_tsc.txt           
+-a---- 69     .scan_tsc2.txt          
+-a---- 177    .scan_utils.txt         
+-a---- 542    .scan_verify.txt        
+-a---- 37654  .tmp_resume_state.txt   
+-a---- 290    ATTRIBUTIONS.md         
+-a---- 3158   bl.log                  
+-a---- 3777   build.log               
+-a---- 4093   build_final3.txt        
+-a---- 4093   build_final4.txt        
+-a---- 4093   build_fix_check.txt     
+-a---- 2392   build_out.txt           
+-a---- 4199   build_output.txt        
+-a---- 4093   build_result.txt        
+-a---- 0      build_verify.txt        
+-a---- 4160   build_verify2.txt       
+-a---- 122    check.py                
+-a---- 1506   check_jsx.py            
+-a---- 2921   check_jsx2.py           
+-a---- 37659  clean_resume.txt        
+-a---- 0      complete_original.txt   
+-a---- 4319   default_shadcn_theme.css
+-a---- 306    fix.py                  
+-a---- 842    git_resume.txt          
+-a---- 613    imports.txt             
+-a---- 1056   index.html              
+-a---- 200175 package-lock.json       
+-a---- 2754   package.json            
+-a---- 17     pnpm-workspace.yaml     
+-a---- 460    postcss.config.mjs      
+-a---- 336    README.md               
+-a---- 18632  resume_temp.txt         
+-a---- 19502  tempimages.txt          
+-a---- 842    temp_orig.txt           
+-a---- 0      temp_original.txt       
+-a---- 926    vite.config.ts          
+-a---- 1275   vite_dev.txt            
+-a---- 1276   vite_dev_final.txt      
+-a---- 1275   vite_final_check.txt    
+-a---- 1276   vite_log.txt            
+-a---- 56     vite_out2.txt           
+-a---- 1276   vite_output.txt         
+
+

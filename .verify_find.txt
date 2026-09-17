@@ -1,0 +1,62 @@
+===== .tmp_resume_state.txt (925 lines) =====
+462:   const markerIdCounter = useRef(0);
+541:   const savedMarkers = useRef<{ startId: string; endId: string } | null>(null);
+578:     const range = restoreSelection();
+604:     const range = restoreSelection();
+656:     restoreSelection();
+669:     const range = restoreSelection();
+684:     const range = restoreSelection();
+829:                 onMouseDown={captureSelection}
+841:                 onMouseDown={captureSelection}
+869:                 onMouseDown={captureSelection}
+881:                 onMouseDown={captureSelection}
+894:                 onMouseDown={captureSelection}
+906:                 onMouseDown={captureSelection}
+===== clean_resume.txt (926 lines) =====
+462:   const markerIdCounter = useRef(0);
+541:   const savedMarkers = useRef<{ startId: string; endId: string } | null>(null);
+578:     const range = restoreSelection();
+604:     const range = restoreSelection();
+656:     restoreSelection();
+669:     const range = restoreSelection();
+684:     const range = restoreSelection();
+829:                 onMouseDown={captureSelection}
+841:                 onMouseDown={captureSelection}
+869:                 onMouseDown={captureSelection}
+881:                 onMouseDown={captureSelection}
+894:                 onMouseDown={captureSelection}
+906:                 onMouseDown={captureSelection}
+===== .scan_helpers.txt (38 lines) =====
+16: 578: const range = restoreSelection();
+22: 604: const range = restoreSelection();
+26: 656: restoreSelection();
+27: 669: const range = restoreSelection();
+29: 684: const range = restoreSelection();
+32: 829: onMouseDown={captureSelection}
+33: 841: onMouseDown={captureSelection}
+34: 869: onMouseDown={captureSelection}
+35: 881: onMouseDown={captureSelection}
+36: 894: onMouseDown={captureSelection}
+37: 906: onMouseDown={captureSelection}
+===== .scan_ids.txt (62 lines) =====
+24: 578|const range = restoreSelection();
+26: 604|const range = restoreSelection();
+36: 656|restoreSelection();
+38: 669|const range = restoreSelection();
+40: 684|const range = restoreSelection();
+56: 829|onMouseDown={captureSelection}
+57: 841|onMouseDown={captureSelection}
+58: 869|onMouseDown={captureSelection}
+59: 881|onMouseDown={captureSelection}
+60: 894|onMouseDown={captureSelection}
+61: 906|onMouseDown={captureSelection}
+===== .scan_head_resume.tsx (1 lines) =====
+===== .scan_tail_a.txt (158 lines) =====
+1: 841|                 onMouseDown={captureSelection}
+29: 869|                 onMouseDown={captureSelection}
+41: 881|                 onMouseDown={captureSelection}
+54: 894|                 onMouseDown={captureSelection}
+66: 906|                 onMouseDown={captureSelection}
+113: 953|                 stageHeight
+114: 954|                   ? { height: `${Math.round(stageHeight * scale) + STAGE_PAD * 2}px` }
+===== .scan_ts.txt (74 lines) =====

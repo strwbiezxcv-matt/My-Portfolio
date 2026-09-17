@@ -1,0 +1,169 @@
+=== ROOT FILES ===
+d----- .agent-cache
+d--h-- .git
+d----- dist
+d----- node_modules
+d----- public
+d----- src
+d----- supabase
+d----- utils
+-a---- $null
+-a---- .env.example
+-a---- .gitignore
+-a---- .scan_assets.txt
+-a---- .scan_build.txt
+-a---- .scan_build2.txt
+-a---- .scan_build3.txt
+-a---- .scan_build_now.txt
+-a---- .scan_bundles.txt
+-a---- .scan_bundle_ctx.txt
+-a---- .scan_bytes.txt
+-a---- .scan_count.txt
+-a---- .scan_defs.txt
+-a---- .scan_deps.txt
+-a---- .scan_dirs.txt
+-a---- .scan_dist.txt
+-a---- .scan_end.txt
+-a---- .scan_env.txt
+-a---- .scan_files.txt
+-a---- .scan_git.txt
+-a---- .scan_grep.txt
+-a---- .scan_head_resume.tsx
+-a---- .scan_helpers.txt
+-a---- .scan_hist.txt
+-a---- .scan_ids.txt
+-a---- .scan_imports.txt
+-a---- .scan_list.txt
+-a---- .scan_list2.txt
+-a---- .scan_oldbundle_hits.txt
+-a---- .scan_oldbundle_keys.txt
+-a---- .scan_oldctx.txt
+-a---- .scan_old_bundle.js
+-a---- .scan_old_ctx.txt
+-a---- .scan_orig.txt
+-a---- .scan_re.txt
+-a---- .scan_resume_tail.txt
+-a---- .scan_root.txt
+-a---- .scan_siblings.txt
+-a---- .scan_size.txt
+-a---- .scan_src2.txt
+-a---- .scan_srcfiles.txt
+-a---- .scan_tail.txt
+-a---- .scan_tail2.txt
+-a---- .scan_tails.txt
+-a---- .scan_tail_a.txt
+-a---- .scan_tail_resume.txt
+-a---- .scan_times.txt
+-a---- .scan_ts.txt
+-a---- .scan_tsc.txt
+-a---- .scan_tsc2.txt
+-a---- .scan_utils.txt
+-a---- .scan_utils2.txt
+-a---- .scan_verify.txt
+-a---- .tmp_resume_state.txt
+-a---- .verify_build.txt
+-a---- .verify_find.txt
+-a---- .verify_gap.txt
+-a---- .verify_head.txt
+-a---- .verify_ids.txt
+-a---- .verify_list.txt
+-a---- .verify_rest.txt
+-a---- .verify_tsc.txt
+-a---- ATTRIBUTIONS.md
+-a---- bl.log
+-a---- build.log
+-a---- build_final3.txt
+-a---- build_final4.txt
+-a---- build_fix_check.txt
+-a---- build_out.txt
+-a---- build_output.txt
+-a---- build_result.txt
+-a---- build_verify.txt
+-a---- build_verify2.txt
+-a---- check.py
+-a---- check_jsx.py
+-a---- check_jsx2.py
+-a---- clean_resume.txt
+-a---- complete_original.txt
+-a---- default_shadcn_theme.css
+-a---- fix.py
+-a---- git_resume.txt
+-a---- imports.txt
+-a---- index.html
+-a---- package-lock.json
+-a---- package.json
+-a---- pnpm-workspace.yaml
+-a---- postcss.config.mjs
+-a---- README.md
+-a---- resume_temp.txt
+-a---- tempimages.txt
+-a---- temp_orig.txt
+-a---- temp_original.txt
+-a---- vite.config.ts
+-a---- vite_dev.txt
+-a---- vite_dev_final.txt
+-a---- vite_final_check.txt
+-a---- vite_log.txt
+-a---- vite_out2.txt
+-a---- vite_output.txt
+=== node_modules top (first 60) ===
+.baseline-browser-mapping-BxQEsulL
+.bin
+.browserslist-Ho1TeKQO
+.esbuild-DcbDyWwl
+.jiti-JBl0KNTN
+.jsesc-PhC8noCK
+.json5-Ahzp9ubM
+.loose-envify-pMhXLlGj
+.nanoid-miCM6aau
+.resolve-uChwcddv
+.rollup-i5WH1Eq7
+.semver-bbVOJrzF
+.update-browserslist-db-fACXLhmy
+.vite
+.vite-temp
+.vite-YCBPFcqH
+.yaml-j8o8tenI
+@ampproject
+@babel
+@emotion
+@esbuild
+@floating-ui
+@isaacs
+@jridgewell
+@mui
+@popperjs
+@radix-ui
+@react-dnd
+@rolldown
+@rollup
+@tailwindcss
+@types
+@vitejs
+aria-hidden
+babel-plugin-macros
+baseline-browser-mapping
+browserslist
+callsites
+caniuse-lite
+canvas-confetti
+chownr
+class-variance-authority
+classnames
+clsx
+cmdk
+convert-source-map
+cookie
+cosmiconfig
+csstype
+d3-array
+d3-color
+d3-ease
+d3-format
+d3-interpolate
+d3-path
+d3-scale
+d3-shape
+d3-time
+d3-time-format
+d3-timer

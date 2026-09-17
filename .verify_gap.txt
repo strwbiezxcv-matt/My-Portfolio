@@ -1,0 +1,91 @@
+455|   };
+456| 
+457|   /* ── Selection preservation via DOM markers ─────────────────────
+458|      Markers are inserted at the selection boundaries and survive DOM
+459|      mutations caused by formatting ops. Selection is saved&restored via
+460|      marker positions rather than live Range references (which go stale). */
+461| 
+462|   const markerIdCounter = useRef(0);
+463| 
+464|   /* A simple CSS.escape replacement for ID-based selectors. */
+465|   const cssEscape = (value: string) =>
+466|     value.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1");
+467| 
+468|   /* Insert a node at the given container/offset. For TEXT_NODEs we use
+469|      splitText so the marker sits at the text offset without corrupting
+470|      content. For ELEMENTs we insert before the child at the offset. */
+471|   const insertNodeAtPosition = (
+472|     paper: HTMLElement,
+473|     node: Node,
+474|     container: Node,
+475|     offset: number
+476|   ) => {
+477|     if (!container || !paper) return;
+478|     if (container.nodeType === Node.TEXT_NODE) {
+479|       const textNode = container as Text;
+480|       const parent = textNode.parentNode;
+481|       if (!parent) return;
+482|       const rest = textNode.splitText(offset);
+483|       parent.insertBefore(node, rest);
+484|     } else if (container instanceof Element) {
+485|       const child = container.childNodes[offset] as Node | null;
+486|       container.insertBefore(node, child);
+487|     } else if (container.parentNode) {
+488|       container.parentNode.insertBefore(node, container.nextSibling);
+489|     }
+490|   };
+491| 
+492|   type MarkerIds = { startId: string; endId: string };
+493| 
+494|   const findMarkers = (startId: string, endId: string): Range | null => {
+495|     const paper = paperRef.current;
+496|     if (!paper) return null;
+497|     const startMarker = paper.querySelector(`#${cssEscape(startId)}`);
+498|     const endMarker = paper.querySelector(`#${cssEscape(endId)}`);
+499|     if (!startMarker || !endMarker) return null;
+500|     const r = document.createRange();
+501|     try {
+502|       r.setStartBefore(startMarker);
+503|       r.setEndBefore(endMarker);
+504|       return r;
+505|     } catch {
+506|       return null;
+507|     }
+508|   };
+509| 
+510|   const clearMarkers = (startId: string, endId: string) => {
+511|     const paper = paperRef.current;
+512|     if (!paper) return;
+513|     const startMarker = paper.querySelector(`#${cssEscape(startId)}`);
+514|     const endMarker = paper.querySelector(`#${cssEscape(endId)}`);
+515|     if (startMarker) startMarker.remove();
+516|     if (endMarker) endMarker.remove();
+517|   };
+518| 
+519|   /* The last known caret block (for block-level fallback when selection
+520|      cannot be restored). Updated on every selectionchange while the
+521|      caret is inside the paper. */
+522|   const lastCaretBlock = useRef<HTMLElement | null>(null);
+523| 
+524|   const updateLastCaretBlock = () => {
+525|     const paper = paperRef.current;
+526|     const sel = window.getSelection();
+527|     if (!paper || !sel || sel.rangeCount === 0) {
+528|       lastCaretBlock.current = null;
+529|       return;
+530|     }
+531|     const live = sel.getRangeAt(0);
+532|     if (!paper.contains(live.commonAncestorContainer)) {
+533|       lastCaretBlock.current = null;
+534|       return;
+535|     }
+536|     const block = getBlock(paper, live.startContainer);
+537|     lastCaretBlock.current = block && block !== paper ? block : null;
+538|   };
+539| 
+540|   const savedRange = useRef<Range | null>(null);
+541|   const savedMarkers = useRef<{ startId: string; endId: string } | null>(null);
+542|   const [activeFormats, setActiveFormats] = useState<Record<string, string>>({});
+543| 
+544|   /* Reflect the formatting at the caret/selection in the dropdowns. */
+545|   const syncFormats = () => {

@@ -1,0 +1,1001 @@
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { motion } from "motion/react";
+import {
+  X,
+  Printer,
+  Save,
+  RotateCcw,
+  Eraser,
+  Bold,
+  Italic,
+  Underline,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  List,
+  Indent,
+  Outdent,
+  Plus,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+  Minus,
+} from "lucide-react";
+import type { Theme } from "../theme";
+
+/* ── Storage & default template ────────────────────────────────── */
+
+/* Per-browser resume storage. localStorage is naturally isolated per
+   browser/device (no accounts needed), and the JSON wrapper leaves room
+   for multiple templates later. All access is guarded so private-mode
+   browsers or corrupted data never crash the app. */
+
+const STORAGE_KEY = "portfolio_resume_data";
+const RESUME_ID = "resume"; // current template slot; more can be added later
+
+function readSavedResume(): string | null {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { v?: number; resumes?: Record<string, string> };
+    const html = parsed?.resumes?.[RESUME_ID];
+    return typeof html === "string" && html.trim() ? html : null;
+  } catch {
+    return null; // malformed data or unavailable storage → use default
+  }
+}
+
+function writeSavedResume(html: string) {
+  try {
+    let data: { v: number; resumes: Record<string, string> } = { v: 1, resumes: {} };
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          data = { v: 1, resumes: { ...(parsed.resumes ?? {}) } };
+        }
+      }
+    } catch {
+      /* keep fresh wrapper if old data was corrupted */
+    }
+    data.resumes[RESUME_ID] = html;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch {
+    return false; // storage unavailable (e.g. some private modes)
+  }
+}
+
+function removeSavedResume() {
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* storage unavailable — nothing to remove */
+  }
+}
+
+const H_STYLE =
+  'class="rsec" style="font-size:11pt;font-weight:700;letter-spacing:2px;border-bottom:1px solid #9ca3af;padding-bottom:2px;margin:14px 0 6px"';
+const P_STYLE = 'style="font-size:10.5pt;line-height:1.4;margin:2px 0"';
+
+const DEFAULT_RESUME_HTML = `
+<div style="text-align:center">
+  <div style="font-size:24pt;font-weight:700;letter-spacing:1px;line-height:1.15">YOUR NAME</div>
+  <div style="font-size:10pt;margin-top:4px">City, Country &nbsp;·&nbsp; 000-000-0000 &nbsp;·&nbsp; your.email@example.com &nbsp;·&nbsp; linkedin.com/in/yourname</div>
+</div>
+<hr style="border:none;border-top:2px solid #111827;margin:10px 0 2px" />
+<h2 ${H_STYLE}>PROFESSIONAL SUMMARY</h2>
+<p ${P_STYLE}>Your professional summary goes here. Write two to three sentences describing who you are, your strongest skills, and the value you bring.</p>
+<h2 ${H_STYLE}>WORK EXPERIENCE</h2>
+<p style="font-size:10.5pt;font-weight:700;margin:4px 0 0">Company Name</p>
+<div style="display:flex;justify-content:space-between;font-size:10pt;margin:0">
+  <span style="font-style:italic">Position</span><span>Date – Date</span>
+</div>
+<ul style="margin:4px 0 8px;padding-left:20px">
+  <li style="font-size:10.5pt;line-height:1.4">Describe your responsibility or achievement.</li>
+  <li style="font-size:10.5pt;line-height:1.4">Describe another relevant contribution.</li>
+</ul>
+<h2 ${H_STYLE}>EDUCATION</h2>
+<p style="font-size:10.5pt;font-weight:700;margin:4px 0 0">School Name</p>
+<div style="display:flex;justify-content:space-between;font-size:10pt;margin:0">
+  <span style="font-style:italic">Degree / Program</span><span>Year – Year</span>
+</div>
+<h2 ${H_STYLE}>SKILLS</h2>
+<ul style="margin:4px 0 8px;padding-left:20px">
+  <li style="font-size:10.5pt;line-height:1.4">Skill</li>
+  <li style="font-size:10.5pt;line-height:1.4">Skill</li>
+  <li style="font-size:10.5pt;line-height:1.4">Skill</li>
+</ul>
+<h2 ${H_STYLE}>PROJECTS</h2>
+<p style="font-size:10.5pt;font-weight:700;margin:4px 0 0">Project Name</p>
+<p ${P_STYLE}>Short project description...</p>
+<h2 ${H_STYLE}>CERTIFICATIONS</h2>
+<p ${P_STYLE}>Certification Name | Year</p>
+<h2 ${H_STYLE}>AFFILIATIONS</h2>
+<p ${P_STYLE}>Organization Name — Role | Year</p>
+`.trim();
+
+const CLEARED_RESUME_HTML = `
+<div style="text-align:center">
+  <div style="font-size:24pt;font-weight:700;letter-spacing:1px;line-height:1.15">YOUR NAME</div>
+  <div style="font-size:10pt;margin-top:4px">Contact information</div>
+</div>
+<hr style="border:none;border-top:2px solid #111827;margin:10px 0 2px" />
+`.trim();
+
+/* ── Editing helpers ───────────────────────────────────────────── */
+
+function exec(cmd: string, value?: string) {
+  try {
+    document.execCommand("styleWithCSS", false, "true");
+    document.execCommand(cmd, false, value ?? null);
+  } catch {
+    /* execCommand unsupported — callers fall back to DOM operations */
+  }
+}
+
+/* Closest block-level ancestor inside the paper (or the paper itself). */
+function getBlock(root: HTMLElement, node: Node | null): HTMLElement | null {
+  let cur: Node | null = node;
+  if (cur && cur.nodeType === Node.TEXT_NODE) cur = cur.parentNode;
+  while (cur && cur !== root) {
+    if (cur.parentNode === root && cur instanceof HTMLElement) return cur;
+    cur = cur.parentNode;
+  }
+  return root;
+}
+
+/* Top-level blocks of the paper intersected by a range. For a collapsed
+   caret this yields the single block containing the caret. */
+function blocksInRange(root: HTMLElement, range: Range): HTMLElement[] {
+  return (Array.from(root.children) as HTMLElement[]).filter((b) =>
+    range.intersectsNode(b)
+  );
+}
+
+/* Paragraph-level formatting driven EXPLICITLY by the given range —
+   never re-reads the (possibly cleared) window selection. */
+function applyBlocksStyle(root: HTMLElement, range: Range, prop: string, value: string) {
+  const targets = blocksInRange(root, range);
+  if (targets.length > 0) {
+    targets.forEach((b) => b.style.setProperty(prop, value));
+    return;
+  }
+  const fallback = getBlock(root, range.startContainer);
+  if (fallback) (fallback as HTMLElement).style.setProperty(prop, value);
+}
+
+/* Wrap exactly the text selected by `range` in a span with the given
+   styles — so formatting applies ONLY to the highlighted text.
+
+   Uses a fragment-extract-wrap-reinsert approach that works for selections
+   spanning any number of nodes/blocks. Falls back to manual DOM surgery
+   when surroundContents is not supported for the range shape. */
+function wrapRangeInline(root: HTMLElement, range: Range, styles: Record<string, string>) {
+  if (range.collapsed || !root.contains(range.commonAncestorContainer)) return;
+
+  const didApply = trySurround(range, styles);
+  if (didApply) return;
+
+  // Robust fallback for ranges that surroundContents cannot handle
+  // (e.g. selections spanning multiple nodes/elements).
+  applyViaExtract(range, styles);
+}
+
+function trySurround(range: Range, styles: Record<string, string>) {
+  // Normalize collapsed whitespace-only ranges.
+  if (range.collapsed) return false;
+  try {
+    const span = document.createElement("span");
+    for (const [prop, value] of Object.entries(styles)) {
+      span.style.setProperty(prop, value);
+    }
+    range.surroundContents(span);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function applyViaExtract(range: Range, styles: Record<string, string>) {
+  const startContainer = range.startContainer;
+  const endContainer = range.endContainer;
+  if (!startContainer || !endContainer) return;
+
+  // Compute the selected fragment across all nodes the range touches.
+  const frag = range.cloneContents();
+
+  // Remove the original selected content from the document.
+  range.deleteContents();
+
+  // Build the styled wrapper.
+  const span = document.createElement("span");
+  for (const [prop, value] of Object.entries(styles)) {
+    span.style.setProperty(prop, value);
+  }
+  span.appendChild(frag);
+
+  // Re-insert the wrapper at the (now-collapsed) range position.
+  const insertPoint = range.startContainer;
+  const insertOffset = range.startOffset;
+  if (insertPoint.nodeType === Node.TEXT_NODE) {
+    const parent = insertPoint.parentNode;
+    if (parent) {
+      const textBefore = (insertPoint as Text).splitText(insertOffset);
+      parent.insertBefore(span, textBefore);
+    } else {
+      // Defensive: insert at the range start as a fallback.
+      const parentEl = insertPoint instanceof Element ? insertPoint : (insertPoint.parentNode as Node);
+      if (parentEl) {
+        const ref = insertPoint.nextSibling;
+        parentEl.insertBefore(span, ref);
+      }
+    }
+  } else if (insertPoint instanceof Element) {
+    insertPoint.insertBefore(span, insertPoint.childNodes[insertOffset] as Node | null);
+  } else if (insertPoint.parentNode) {
+    insertPoint.parentNode.insertBefore(span, insertPoint.nextSibling);
+  }
+
+  // Restore selection to the newly inserted span's contents.
+  try {
+    const sel = window.getSelection();
+    if (sel) {
+      const r = document.createRange();
+      if (span.firstChild) {
+        r.selectNodeContents(span);
+      } else {
+        r.setStart(span, 0);
+        r.collapse(true);
+      }
+      sel.removeAllRanges();
+      sel.addRange(r);
+    }
+  } catch {
+    /* selection restore is best-effort */
+  }
+}
+
+/* Apply styles to the exact selected text of the GIVEN range.
+   Returns true when a non-collapsed range inside `root` was formatted. */
+function applyInlineToRange(root: HTMLElement, range: Range, styles: Record<string, string>): boolean {
+  if (range.collapsed || !root.contains(range.commonAncestorContainer)) return false;
+  wrapRangeInline(root, range, styles);
+  return true;
+}
+
+/* Read the effective bold/italic/underline state of the first text
+   node touched by the range (used for manual toggles). */
+function inlineStateOfRange(range: Range): { bold: boolean; italic: boolean; underline: boolean } {
+  let node: Node | null = range.startContainer;
+  if (node.nodeType === Node.TEXT_NODE) {
+    node = node.parentNode;
+  }
+  const el = (node instanceof HTMLElement ? node : node?.parentElement) ?? null;
+  if (!el) return { bold: false, italic: false, underline: false };
+  const cs = window.getComputedStyle(el);
+  const weight = parseInt(cs.fontWeight, 10);
+  return {
+    bold: Number.isFinite(weight) ? weight >= 600 : cs.fontWeight === "bold",
+    italic: cs.fontStyle === "italic",
+    underline: (cs.textDecorationLine ?? cs.textDecoration).toString().includes("underline"),
+  };
+}
+
+/* ── Section helpers ───────────────────────────────────────────── */
+
+/* A section starts at an .rsec heading and ends
+   right before the next .rsec heading (or the paper's end). */
+function getSectionRange(root: HTMLElement, node: Node | null): { start: HTMLElement; end: HTMLElement | null } | null {
+  const block = getBlock(root, node);
+  if (!block || block === root) return null;
+  let start: HTMLElement | null = null;
+  let el = block.previousElementSibling as HTMLElement | null;
+  while (el) {
+    if (el.classList.contains("rsec")) {
+      start = el;
+      break;
+    }
+    el = el.previousElementSibling as HTMLElement | null;
+  }
+  if (!start) start = (root.firstElementChild as HTMLElement) ?? block;
+  let end: HTMLElement | null = null;
+  el = start.nextElementSibling as HTMLElement | null;
+  while (el) {
+    if (el.classList.contains("rsec")) {
+      end = el;
+      break;
+    }
+    el = el.nextElementSibling as HTMLElement | null;
+  }
+  return { start, end };
+}
+
+/* ── Toolbar primitives ────────────────────────────────────────── */
+
+/* Option lists shared by the dropdowns and the format-sync logic. */
+const FONT_OPTIONS = [
+  { label: "Inter", value: "Inter, sans-serif" },
+  { label: "Arial", value: "Arial, sans-serif" },
+  { label: "Times New Roman", value: "'Times New Roman', serif" },
+  { label: "Georgia", value: "Georgia, serif" },
+  { label: "Calibri", value: "Calibri, sans-serif" },
+  { label: "Courier New", value: "'Courier New', monospace" },
+];
+const SIZE_OPTIONS = ["8pt", "9pt", "10pt", "10.5pt", "11pt", "12pt", "14pt", "16pt", "18pt", "24pt"];
+const LINE_OPTIONS = ["1", "1.15", "1.3", "1.5", "1.75", "2"];
+const LS_OPTIONS = ["0.5px", "1px", "2px"];
+
+
+function ToolBtn({
+  onClick,
+  title,
+  children,
+  theme,
+}: {
+  onClick: () => void;
+  title: string;
+  children: React.ReactNode;
+  theme: Theme;
+}) {
+  return (
+    <button
+      type="button"
+      title={title}
+      aria-label={title}
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={onClick}
+      className={`p-1.5 rounded-md border transition-colors duration-300 cursor-pointer ${theme.chip} hover:bg-brand/20`}
+    >
+      {children}
+    </button>
+  );
+}
+
+const selectCls = (wide = false) =>
+  `resume-select${wide ? " resume-select-wide" : ""}`;
+
+function Divider({ theme }: { theme: Theme }) {
+  return <span className={`mx-1 inline-block h-5 w-px align-middle ${theme.divider}`} />;
+}
+
+/* ── Main modal ────────────────────────────────────────────────── */
+
+interface ResumeEditorProps {
+  theme: Theme;
+  onClose: () => void;
+}
+
+/* 210mm ≈ 794px at 96dpi — used for scaling the preview. */
+const A4_PX_WIDTH = 794;
+
+/* Vertical breathing room around the scaled A4 preview stage, so the page
+   never touches the surrounding card edges. */
+const STAGE_PAD = 12;
+
+export default function ResumeEditor({ theme, onClose }: ResumeEditorProps) {
+  const paperRef = useRef<HTMLDivElement>(null);
+  const printRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [savedNote, setSavedNote] = useState("");
+  const persistTimer = useRef<number | null>(null);
+
+  /* Load this browser's saved resume (or the default template), and
+     scale the preview to the container. */
+  useEffect(() => {
+    const paper = paperRef.current;
+    if (paper && !paper.innerHTML.trim()) {
+      paper.innerHTML = readSavedResume() ?? DEFAULT_RESUME_HTML;
+    }
+    const el = wrapRef.current;
+    if (!el) return;
+    const measure = () => setScale(Math.min(1, (el.clientWidth - 8) / A4_PX_WIDTH));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    /* Save pending changes before refresh / navigation / tab close. */
+    window.addEventListener("pagehide", flushSave);
+    window.addEventListener("beforeunload", flushSave);
+    /* Track the live selection inside the paper: keeps the last range
+       for toolbar use and keeps the dropdowns in sync with formatting. */
+    const onSelectionChange = () => {
+      const paper = paperRef.current;
+      const sel = window.getSelection();
+      if (paper && sel && sel.rangeCount > 0 && paper.contains(sel.anchorNode)) {
+        savedRange.current = sel.getRangeAt(0).cloneRange();
+        syncFormats();
+      }
+    };
+    document.addEventListener("selectionchange", onSelectionChange);
+    return () => {
+      ro.disconnect();
+      document.removeEventListener("selectionchange", onSelectionChange);
+      /* Flush pending auto-saves when the editor unmounts (closed). */
+      if (persistTimer.current) {
+        window.clearTimeout(persistTimer.current);
+        persistTimer.current = null;
+        persist();
+      }
+      window.removeEventListener("pagehide", flushSave);
+      window.removeEventListener("beforeunload", flushSave);
+    };
+  }, []);
+
+  /* Auto-save: every change (typing, formatting, structure) is persisted
+     to this browser's localStorage with a short debounce. */
+  const persist = (): boolean => {
+    if (!paperRef.current) return false;
+    return writeSavedResume(paperRef.current.innerHTML);
+  };
+
+  const runSave = (showNote: boolean) => {
+    const ok = persist();
+    if (showNote) {
+      setSavedNote(ok ? "Saved" : "Couldn't save locally");
+      if (ok) window.setTimeout(() => setSavedNote(""), 2000);
+    }
+  };
+
+  const schedulePersist = () => {
+    setSavedNote("Saving…");
+    if (persistTimer.current) window.clearTimeout(persistTimer.current);
+    persistTimer.current = window.setTimeout(() => {
+      persistTimer.current = null;
+      runSave(true);
+    }, 300);
+  };
+
+  /* Save immediately (used before printing, unloading, closing). */
+  const flushSave = () => {
+    if (persistTimer.current) {
+      window.clearTimeout(persistTimer.current);
+      persistTimer.current = null;
+    }
+    persist();
+  };
+
+  /* ── Selection preservation via DOM markers ─────────────────────
+     Markers are inserted at the selection boundaries and survive DOM
+     mutations caused by formatting ops. Selection is saved&restored via
+     marker positions rather than live Range references (which go stale). */
+
+  const markerIdCounter = useRef(0);
+
+  /* A simple CSS.escape replacement for ID-based selectors. */
+  const cssEscape = (value: string) =>
+    value.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1");
+
+  /* Insert a node at the given container/offset. For TEXT_NODEs we use
+     splitText so the marker sits at the text offset without corrupting
+     content. For ELEMENTs we insert before the child at the offset. */
+  const insertNodeAtPosition = (
+    paper: HTMLElement,
+    node: Node,
+    container: Node,
+    offset: number
+  ) => {
+    if (!container || !paper) return;
+    if (container.nodeType === Node.TEXT_NODE) {
+      const textNode = container as Text;
+      const parent = textNode.parentNode;
+      if (!parent) return;
+      const rest = textNode.splitText(offset);
+      parent.insertBefore(node, rest);
+    } else if (container instanceof Element) {
+      const child = container.childNodes[offset] as Node | null;
+      container.insertBefore(node, child);
+    } else if (container.parentNode) {
+      container.parentNode.insertBefore(node, container.nextSibling);
+    }
+  };
+
+  type MarkerIds = { startId: string; endId: string };
+
+  const findMarkers = (startId: string, endId: string): Range | null => {
+    const paper = paperRef.current;
+    if (!paper) return null;
+    const startMarker = paper.querySelector(`#${cssEscape(startId)}`);
+    const endMarker = paper.querySelector(`#${cssEscape(endId)}`);
+    if (!startMarker || !endMarker) return null;
+    const r = document.createRange();
+    try {
+      r.setStartBefore(startMarker);
+      r.setEndBefore(endMarker);
+      return r;
+    } catch {
+      return null;
+    }
+  };
+
+  const clearMarkers = (startId: string, endId: string) => {
+    const paper = paperRef.current;
+    if (!paper) return;
+    const startMarker = paper.querySelector(`#${cssEscape(startId)}`);
+    const endMarker = paper.querySelector(`#${cssEscape(endId)}`);
+    if (startMarker) startMarker.remove();
+    if (endMarker) endMarker.remove();
+  };
+
+  /* The last known caret block (for block-level fallback when selection
+     cannot be restored). Updated on every selectionchange while the
+     caret is inside the paper. */
+  const lastCaretBlock = useRef<HTMLElement | null>(null);
+
+  const updateLastCaretBlock = () => {
+    const paper = paperRef.current;
+    const sel = window.getSelection();
+    if (!paper || !sel || sel.rangeCount === 0) {
+      lastCaretBlock.current = null;
+      return;
+    }
+    const live = sel.getRangeAt(0);
+    if (!paper.contains(live.commonAncestorContainer)) {
+      lastCaretBlock.current = null;
+      return;
+    }
+    const block = getBlock(paper, live.startContainer);
+    lastCaretBlock.current = block && block !== paper ? block : null;
+  };
+
+  const savedRange = useRef<Range | null>(null);
+  const savedMarkers = useRef<{ startId: string; endId: string } | null>(null);
+  const [activeFormats, setActiveFormats] = useState<Record<string, string>>({});
+
+  /* Reflect the formatting at the caret/selection in the dropdowns. */
+  const syncFormats = () => {
+    const paper = paperRef.current;
+    const sel = window.getSelection();
+    if (!paper || !sel || sel.rangeCount === 0) return;
+    const node = sel.focusNode;
+    if (!node || !paper.contains(node)) return;
+    const el = node instanceof Element ? node : node.parentElement;
+    if (!el) return;
+    const cs = window.getComputedStyle(el);
+
+    const fam = cs.fontFamily.split(",")[0].replace(/["']/g, "").trim().toLowerCase();
+    const font = FONT_OPTIONS.find((f) => fam.startsWith(f.label.toLowerCase()))?.value ?? "";
+
+    const sizePt = parseFloat(cs.fontSize) * 0.75;
+    const size = SIZE_OPTIONS.find((s) => Math.abs(parseFloat(s) - sizePt) <= 0.3) ?? "";
+
+    const ratio = parseFloat(cs.lineHeight) / (parseFloat(cs.fontSize) || 16);
+    const lineHeight = LINE_OPTIONS.find((v) => Math.abs(parseFloat(v) - ratio) <= 0.04) ?? "";
+
+    const lsPx = parseFloat(cs.letterSpacing) || 0;
+    const letterSpacing =
+      lsPx < 0.3 ? "normal" : LS_OPTIONS.find((v) => Math.abs(parseFloat(v) - lsPx) <= 0.3) ?? "";
+
+    const alignRaw = cs.textAlign === "start" ? "left" : cs.textAlign === "end" ? "right" : cs.textAlign;
+    const align = ["left", "center", "right", "justify"].includes(alignRaw) ? alignRaw : "";
+
+    setActiveFormats({ font, size, lineHeight, letterSpacing, align });
+  };
+
+  /* Apply a formatting change. Every op works on the RESTORED range —
+     the live window selection is never trusted — and every op ends
+     with a re-capture so consecutive operations keep working. */
+  const applyFormat = (kind: string, value: string) => {
+    const range = restoreSelection();
+    const paper = paperRef.current;
+    if (!paper || !range || !value) return;
+    const styleTarget = (prop: string, v: string) => {
+      // Inline (exact highlighted text) when possible, else the block(s).
+      if (!applyInlineToRange(paper, range, { [prop]: v })) {
+        applyBlocksStyle(paper, range, prop, v);
+      }
+    };
+    if (kind === "font") styleTarget("fontFamily", value);
+    else if (kind === "size") styleTarget("fontSize", value);
+    else if (kind === "letterSpacing") styleTarget("letterSpacing", value);
+    else if (kind === "lineHeight") applyBlocksStyle(paper, range, "lineHeight", value);
+    else if (kind === "paragraphSpacing") applyBlocksStyle(paper, range, "marginBottom", value);
+    else if (kind === "blockIndent") {
+      const idx = value.indexOf(":");
+      if (idx > 0) applyBlocksStyle(paper, range, value.slice(0, idx), value.slice(idx + 1));
+    }
+    schedulePersist();
+    syncFormats();
+  };
+
+  /* Toggle bold/italic/underline: verify execCommand changed the DOM;
+     if it did not, apply the formatting manually via styled spans so
+     the change is ALWAYS visible. */
+  const toggleInline = (cmd: string, prop: string, onValue: string, offValue: string) => {
+    const range = restoreSelection();
+    const paper = paperRef.current;
+    if (!paper || !range) return;
+    const currentlyOn = inlineStateOfRange(range)[prop === "fontWeight" ? "bold" : prop === "fontStyle" ? "italic" : "underline"];
+    const targetValue = currentlyOn ? offValue : onValue;
+    const before = paper.innerHTML;
+    exec(cmd);
+    if (paper.innerHTML === before) {
+      // execCommand had no effect — apply manually on the exact range,
+      // flipping TO the desired state (not reverting it).
+      applyInlineToRange(paper, range, { [prop]: targetValue });
+    }
+    // Refresh the saved range to the post-format selection.
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0 && paper.contains(sel.anchorNode)) {
+      savedRange.current = sel.getRangeAt(0).cloneRange();
+    }
+    schedulePersist();
+    syncFormats();
+  };
+
+  const handlePrint = () => {
+    if (paperRef.current && printRef.current) {
+      flushSave(); // print the latest autosaved state
+      printRef.current.innerHTML = paperRef.current.innerHTML;
+      window.print();
+    }
+  };
+
+  const handleSave = () => {
+    runSave(true);
+  };
+
+  const handleReset = () => {
+    if (!window.confirm("Reset the template to its original state? Your saved resume in this browser will be removed.")) return;
+    removeSavedResume();
+    if (paperRef.current) paperRef.current.innerHTML = DEFAULT_RESUME_HTML;
+    setSavedNote("Template reset");
+    window.setTimeout(() => setSavedNote(""), 2000);
+  };
+
+  const handleClear = () => {
+    if (!window.confirm("Clear all resume content? This only affects your locally saved resume in this browser.")) return;
+    if (paperRef.current) {
+      paperRef.current.innerHTML = CLEARED_RESUME_HTML;
+      persist(); // save the cleared state for this browser only
+    }
+  };
+
+  /* Focus the paper, restore the saved selection, run the op, then
+     re-capture the (possibly transformed) selection and autosave. */
+  const withFocus = (fn: () => void) => {
+    restoreSelection();
+    fn();
+    const paper = paperRef.current;
+    const sel = window.getSelection();
+    if (paper && sel && sel.rangeCount > 0 && paper.contains(sel.anchorNode)) {
+      savedRange.current = sel.getRangeAt(0).cloneRange();
+    }
+    schedulePersist();
+    syncFormats();
+  };
+
+  /* Paragraph alignment via explicit DOM styling — always visible. */
+  const alignTo = (value: string) => {
+    const range = restoreSelection();
+    const paper = paperRef.current;
+    if (!paper || !range) return;
+    applyBlocksStyle(paper, range, "textAlign", value);
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0 && paper.contains(sel.anchorNode)) {
+      savedRange.current = sel.getRangeAt(0).cloneRange();
+    }
+    schedulePersist();
+    syncFormats();
+  };
+
+  /* Indentation: try execCommand (proper list nesting), verify it
+     changed something, and fall back to explicit margin styling. */
+  const indentBy = (dir: 1 | -1) => {
+    const range = restoreSelection();
+    const paper = paperRef.current;
+    if (!paper || !range) return;
+    const blocks = blocksInRange(paper, range);
+    const first = blocks[0] ?? getBlock(paper, range.startContainer);
+    const beforeML = first ? window.getComputedStyle(first).marginLeft : "";
+    const beforeHTML = paper.innerHTML;
+    exec(dir === 1 ? "indent" : "outdent");
+    const afterML = first ? window.getComputedStyle(first).marginLeft : "";
+    if (paper.innerHTML === beforeHTML && beforeML === afterML) {
+      const base = parseFloat(beforeML) || 0;
+      const next = Math.max(0, base + dir * 24);
+      const targets = blocks.length > 0 ? blocks : first ? [first] : [];
+      targets.forEach((b) => b.style.setProperty("marginLeft", `${next}px`));
+    }
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0 && paper.contains(sel.anchorNode)) {
+      savedRange.current = sel.getRangeAt(0).cloneRange();
+    }
+    schedulePersist();
+    syncFormats();
+  };
+
+  /* Start node for section operations — prefers the preserved range. */
+  const currentStartContainer = (): Node | null => {
+    if (savedRange.current) return savedRange.current.startContainer;
+    const sel = window.getSelection();
+    return sel && sel.rangeCount > 0 ? sel.getRangeAt(0).startContainer : null;
+  };
+
+  const addSection = () => {
+    withFocus(() =>
+      exec("insertHTML", `<h2 ${H_STYLE}>NEW SECTION</h2><hr style="border:none;border-top:1px solid #9ca3af;margin:6px 0" /><p ${P_STYLE}>Section content...</p>`)
+    );
+  };
+
+  const removeSection = () => {
+    const paper = paperRef.current;
+    if (!paper) return;
+    const node = currentStartContainer();
+    if (!node || !paper.contains(node)) return;
+    const range = getSectionRange(paper, node);
+    if (!range || range.start === paper.firstElementChild) return; // keep the header block
+    const r = document.createRange();
+    r.setStartBefore(range.start);
+    if (range.end) r.setEndBefore(range.end);
+    else r.setEnd(paper, paper.childNodes.length);
+    r.deleteContents();
+  };
+
+  const moveSection = (dir: -1 | 1) => {
+    const paper = paperRef.current;
+    if (!paper) return;
+    const node = currentStartContainer();
+    if (!node || !paper.contains(node)) return;
+    const sec = getSectionRange(paper, node);
+    if (!sec) return;
+    const frag = document.createDocumentFragment();
+    let el: Element | null = sec.start;
+    while (el && el !== sec.end) {
+      const next = el.nextElementSibling;
+      frag.appendChild(el);
+      el = next;
+    }
+    if (dir === -1) {
+      let anchor: Element | null = sec.start.previousElementSibling;
+      while (anchor && !anchor.classList.contains("rsec") && anchor.previousElementSibling) {
+        anchor = anchor.previousElementSibling;
+        if (anchor.classList.contains("rsec")) break;
+      }
+      if (anchor && anchor.classList.contains("rsec")) paper.insertBefore(frag, anchor);
+      else if (anchor) paper.insertBefore(frag, anchor.nextSibling);
+      else paper.insertBefore(frag, paper.firstChild);
+    } else {
+      if (sec.end) paper.insertBefore(frag, sec.end.nextElementSibling);
+      else paper.appendChild(frag);
+    }
+  };
+
+  const btn = (title: string, icon: React.ReactNode, fn: () => void) => (
+    <ToolBtn key={title} title={title} theme={theme} onClick={() => withFocus(fn)}>
+      {icon}
+    </ToolBtn>
+  );
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="resume-editor-shell fixed inset-0 z-[100] overflow-y-auto"
+      onClick={onClose}
+    >
+      <div className="flex min-h-full items-start justify-center p-4">
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          transition={{ type: "spring", damping: 26 }}
+          className={`relative w-full max-w-5xl rounded-2xl shadow-2xl ${theme.card}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className={`flex flex-wrap items-center justify-between gap-3 border-b px-6 py-4 ${theme.divider}`}>
+            <div>
+              <h3 className="text-xl font-bold tracking-tight">Resume Template</h3>
+              <p className={`text-xs mt-0.5 ${theme.muted}`}>
+                Edit directly on the A4 page — select text to format it. No account needed.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {savedNote && (
+                <span
+                  className={`text-xs font-medium ${
+                    savedNote.startsWith("Couldn't") ? "text-red-500" : theme.icon
+                  }`}
+                  aria-live="polite"
+                >
+                  {savedNote}
+                </span>
+              )}
+              <motion.button
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={handlePrint}
+                className={`inline-flex cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white will-change-transform ${theme.btnPrimary}`}
+              >
+                <Printer size={16} /> Print Resume
+              </motion.button>
+              <button
+                onClick={onClose}
+                className={`p-2.5 rounded-full border transition-all cursor-pointer ${theme.chip} hover:bg-brand/15`}
+                aria-label="Close resume editor"
+              >
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Formatting toolbar */}
+          <div className={`border-b px-4 py-3 ${theme.divider}`}>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <select
+                className={selectCls(true)}
+                title="Font family"
+                onMouseDown={captureSelection}
+                value={activeFormats.font ?? ""}
+                onChange={(e) => applyFormat("font", e.target.value)}
+              >
+                <option value="" disabled>Font</option>
+                {FONT_OPTIONS.map((f) => (
+                  <option key={f.label} value={f.value}>{f.label}</option>
+                ))}
+              </select>
+              <select
+                className={selectCls()}
+                title="Font size"
+                onMouseDown={captureSelection}
+                value={activeFormats.size ?? ""}
+                onChange={(e) => applyFormat("size", e.target.value)}
+              >
+                <option value="" disabled>Size</option>
+                {SIZE_OPTIONS.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <Divider theme={theme} />
+              {btn("Bold", <Bold size={15} />, () => toggleInline("bold", "fontWeight", "700", "400"))}
+              {btn("Italic", <Italic size={15} />, () => toggleInline("italic", "fontStyle", "italic", "normal"))}
+              {btn("Underline", <Underline size={15} />, () =>
+                toggleInline("underline", "textDecoration", "underline", "none")
+              )}
+              <Divider theme={theme} />
+              {btn("Align left", <AlignLeft size={15} />, () => alignTo("left"))}
+              {btn("Align center", <AlignCenter size={15} />, () => alignTo("center"))}
+              {btn("Align right", <AlignRight size={15} />, () => alignTo("right"))}
+              {btn("Justify", <AlignJustify size={15} />, () => alignTo("justify"))}
+              <Divider theme={theme} />
+              {btn("Bullet list", <List size={15} />, () => exec("insertUnorderedList"))}
+              {btn("Decrease indent", <Outdent size={15} />, () => indentBy(-1))}
+              {btn("Increase indent", <Indent size={15} />, () => indentBy(1))}
+              <Divider theme={theme} />
+              <select
+                className={selectCls()}
+                title="Line spacing"
+                onMouseDown={captureSelection}
+                value={activeFormats.lineHeight ?? ""}
+                onChange={(e) => applyFormat("lineHeight", e.target.value)}
+              >
+                <option value="" disabled>Line spacing</option>
+                {LINE_OPTIONS.map((v) => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
+              </select>
+              <select
+                className={selectCls()}
+                title="Letter spacing"
+                onMouseDown={captureSelection}
+                value={activeFormats.letterSpacing ?? ""}
+                onChange={(e) => applyFormat("letterSpacing", e.target.value)}
+              >
+                <option value="" disabled>Letter spacing</option>
+                <option value="normal">Normal</option>
+                <option value="0.5px">+0.5px</option>
+                <option value="1px">+1px</option>
+                <option value="2px">+2px</option>
+              </select>
+              <select
+                className={selectCls()}
+                title="Paragraph spacing"
+                onMouseDown={captureSelection}
+                defaultValue=""
+                onChange={(e) => applyFormat("paragraphSpacing", e.target.value)}
+              >
+                <option value="" disabled>Paragraph spacing</option>
+                {["0px", "2px", "4px", "8px", "12px", "16px"].map((v) => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
+              </select>
+              <select
+                className={selectCls()}
+                title="Indentation"
+                onMouseDown={captureSelection}
+                defaultValue=""
+                onChange={(e) => {
+                  if (e.target.value) applyFormat("blockIndent", e.target.value);
+                  e.target.value = "";
+                }}
+              >
+                <option value="" disabled>Indent (left/right)</option>
+                <option value="marginLeft:0px">Left indent: none</option>
+                <option value="marginLeft:12px">Left indent: +12px</option>
+                <option value="marginLeft:24px">Left indent: +24px</option>
+                <option value="marginLeft:48px">Left indent: +48px</option>
+                <option value="marginRight:12px">Right indent: +12px</option>
+                <option value="marginRight:24px">Right indent: +24px</option>
+                <option value="marginRight:48px">Right indent: +48px</option>
+              </select>
+              <Divider theme={theme} />
+              {btn("Add divider line", <Minus size={15} />, () =>
+                exec("insertHTML", '<hr style="border:none;border-top:1px solid #9ca3af;margin:6px 0" />')
+              )}
+            </div>
+            {/* Document-level actions (save / reset / clear / sections) */}
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <ToolBtn title="Save resume" theme={theme} onClick={handleSave}>
+                <Save size={15} />
+              </ToolBtn>
+              <ToolBtn title="Reset template" theme={theme} onClick={handleReset}>
+                <RotateCcw size={15} />
+              </ToolBtn>
+              <ToolBtn title="Clear content" theme={theme} onClick={handleClear}>
+                <Eraser size={15} />
+              </ToolBtn>
+              <Divider theme={theme} />
+              {btn("Add section", <Plus size={15} />, addSection)}
+              {btn("Delete section", <Trash2 size={15} />, removeSection)}
+              {btn("Move section up", <ArrowUp size={15} />, () => moveSection(-1))}
+              {btn("Move section down", <ArrowDown size={15} />, () => moveSection(1))}
+            </div>
+          </div>
+
+          {/* A4 page. The preview is scaled down to fit narrow screens while
+              the saved/printed markup always stays true A4 size. */}
+          <div className="px-4 py-5 sm:px-6">
+            <div
+              ref={wrapRef}
+              className="relative w-full overflow-hidden"
+              style={
+                stageHeight
+                  ? { height: `${Math.round(stageHeight * scale) + STAGE_PAD * 2}px` }
+                  : undefined
+              }
+            >
+              <div
+                style={{
+                  width: `${A4_PX_WIDTH}px`,
+                  marginLeft: `calc(50% - ${A4_PX_WIDTH / 2}px)`,
+                  transform: `scale(${scale})`,
+                  transformOrigin: "top center",
+                }}
+              >
+                <div
+                  ref={paperRef}
+                  className="resume-a4"
+                  contentEditable
+                  suppressContentEditableWarning
+                  spellCheck={false}
+                  role="textbox"
+                  aria-multiline="true"
+                  aria-label="Editable resume page"
+                  onInput={schedulePersist}
+                  onKeyUp={syncFormats}
+                  onMouseUp={syncFormats}
+                  onFocus={updateLastCaretBlock}
+                  onBlur={flushSave}
+                />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Print copy — hidden on screen (#resume-print-root), and the only
+          thing that is printed (see the @media print rules in globals.css). */}
+      {createPortal(
+        <div id="resume-print-root" aria-hidden="true">
+          <div ref={printRef} className="resume-a4 resume-a4-print" />
+        </div>,
+        document.body
+      )}
+    </motion.div>
+  );
+}
