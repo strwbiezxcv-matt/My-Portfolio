@@ -10,11 +10,12 @@
  */
 export default function ProfilePhoto() {
   return (
-    <div className="aspect-square w-full max-w-[380px] overflow-hidden rounded-xl border border-brand/30 bg-brand/5">
+    <div className="mx-auto w-full max-w-[320px] sm:max-w-[380px] px-4 py-6">
       <img
-        src="/imagee.jpg"
+        src="/avatar-sticker.png"
         alt="Matt Bianzon"
-        className="h-full w-full object-cover"
+        className="h-auto w-full object-contain [filter:drop-shadow(0_0_14px_rgba(255,255,255,0.25))_drop-shadow(0_10px_22px_rgba(0,0,0,0.22))] motion-safe:transition-transform motion-safe:hover:scale-[1.03]"
+        draggable={false}
       />
     </div>
   );

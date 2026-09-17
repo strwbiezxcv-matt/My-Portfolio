@@ -139,7 +139,7 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
                 <motion.button
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => onNavigate("work")}
+                  onClick={() => onNavigate("projects")}
                   className={`${theme.btnPrimary} will-change-transform`}
                 >
                   View My Work <ArrowRight size={18} />
