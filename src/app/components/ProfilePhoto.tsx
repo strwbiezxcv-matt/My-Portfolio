@@ -14,7 +14,7 @@ export default function ProfilePhoto() {
       <img
         src="/avatar-sticker.png"
         alt="Matt Bianzon"
-        className="h-auto w-full object-contain [filter:drop-shadow(0_0_14px_rgba(255,255,255,0.25))_drop-shadow(0_10px_22px_rgba(0,0,0,0.22))] motion-safe:transition-transform motion-safe:hover:scale-[1.03]"
+        className="h-auto w-full object-contain motion-safe:transition-transform motion-safe:hover:scale-[1.03]"
         draggable={false}
       />
     </div>
