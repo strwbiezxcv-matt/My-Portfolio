@@ -57,7 +57,7 @@ export default function Sidebar(props: SidebarProps) {
       onClick={() => onNavigate("about")}
       className="text-xl font-bold tracking-tight text-brand hover:text-brand-strong transition-colors cursor-pointer"
     >
-      strwbiezxcv
+      Matt Bianzon
     </button>
   );
 

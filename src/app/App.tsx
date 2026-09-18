@@ -145,7 +145,7 @@ export default function App() {
             <footer className={`py-8 border-t text-center text-sm transition-colors duration-500 ${theme.footer}`}>
               <div className="mx-auto mb-4 flex items-center justify-center gap-3">
                 <span className="section-num-rule" />
-                <span className="section-num">STRWBIEZXCV · 2026</span>
+                <span className="section-num">Matt Bianzon · 2026</span>
                 <span className="section-num-rule" />
               </div>
               <p>&copy; 2026 Matt Portfolio. All rights reserved.</p>
