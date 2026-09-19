@@ -83,8 +83,8 @@ function RecCard({
       </div>
 
       <div className="mt-4 border-t border-gray-200/60 pt-3 dark:border-white/10">
-        <p className="text-sm font-semibold">&mdash; {rec.name}</p>
-        {rec.from && <p className={`text-xs ${theme.faint}`}>From: {rec.from}</p>}
+        <p className="text-sm font-semibold tracking-tight">&mdash; {rec.name}</p>
+        {rec.from && <p className={`mt-0.5 font-mono text-[10px] uppercase tracking-[0.15em] ${theme.faint}`}>From: {rec.from}</p>}
       </div>
     </motion.article>
   );

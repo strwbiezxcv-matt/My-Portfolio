@@ -28,6 +28,7 @@ import infographicsImg from "../imports/infographics.png";
 import salesTrainingCertImg from "../imports/sales-training-certificate.png";
 import mhcCertImg from "../imports/MHC CERT.png";
 import prsaCertImg from "../imports/PRSA CERT.png";
+import buildingWealthCertImg from "../imports/building-your-wealth-certificate.png";
 
 /* PROJECTS (new stacked-card section)
    To add/edit a project: append an entry below. Title, category, description, and technologies are required;
@@ -255,6 +256,14 @@ export const seminars = [
     period: "Certificate",
     description: "Certificate of training and participation with the Mental Health Coalition (MHC).",
     image: mhcCertImg,
+  },
+   {
+    title: "Building Your Wealth: A Wealth Management Webinar",
+    category: "Webinar",
+    type: "Seminar / Talk",
+    period: "2026",
+    description: "Certificate of participation in the Atsoca Learning Level-Up Training wealth management webinar \"Building Your Wealth\", held on August 30, 2026 via Zoom Cloud.",
+    image: buildingWealthCertImg,
   },
   {
     title: "Public Relation and Societal Affairs (PRSA) Certificate",

@@ -86,14 +86,19 @@ export default function Materials({ theme }: MaterialsProps) {
                 whileHover={{ y: -6 }}
                 className={`group flex flex-col p-6 rounded-xl ${theme.card} ${theme.cardHover} transition-shadow duration-300 will-change-transform`}
               >
-                <div className={`p-3 rounded-md w-fit mb-4 ${theme.chip}`}>
-                  <Icon size={24} className={theme.icon} />
+                <div className="mb-4 flex items-start justify-between">
+                  <div className={`p-3 rounded-md ${theme.chip}`}>
+                    <Icon size={24} className={theme.icon} />
+                  </div>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-50">
+                    RES-{String(index + 1).padStart(2, "0")}
+                  </span>
                 </div>
-                <h3 className="text-lg font-semibold mb-1">{material.title}</h3>
+                <h3 className="text-lg font-semibold mb-1 tracking-tight">{material.title}</h3>
                 <p className={`text-sm leading-relaxed mb-4 flex-1 ${theme.muted}`}>{material.description}</p>
                 <div className="mb-5 flex flex-wrap gap-2">
                   {material.tags.map((tag) => (
-                    <span key={tag} className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${theme.chip}`}>
+                    <span key={tag} className={`rounded-md border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.15em] ${theme.chip}`}>
                       {tag}
                     </span>
                   ))}
@@ -104,7 +109,7 @@ export default function Materials({ theme }: MaterialsProps) {
                   </span>
                 ) : material.action ? (
                   <motion.button
-                    whileHover={{ scale: 1.03 }}
+                    whileHover={{ scale: 1.03, y: -1 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => openMaterial(material)}
                     className={`inline-flex w-fit cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white transition will-change-transform ${theme.btnPrimary}`}

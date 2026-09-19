@@ -52,19 +52,22 @@ export default function Experience({ theme, onNavigate }: ExperienceProps) {
                     <Briefcase size={22} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold">{job.company}</h3>
-                    <p className={`font-medium mt-0.5 ${theme.text}`}>{job.role}</p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">
+                      EXP-{String(index + 1).padStart(2, "0")}
+                    </p>
+                    <h3 className="text-xl font-semibold tracking-tight">{job.company}</h3>
+                    <p className="font-medium mt-0.5 text-brand-strong">{job.role}</p>
                   </div>
                 </div>
-                <span className={`text-xs font-medium uppercase tracking-wider px-3 py-1 rounded-full ${theme.chip}`}>
+                <span className={`font-mono text-[11px] font-medium uppercase tracking-[0.2em] px-3 py-1 rounded-full border ${theme.chip}`}>
                   {job.period}
                 </span>
               </div>
 
               <ul className="mt-5 space-y-2.5">
                 {job.details.map((detail, idx) => (
-                  <li key={idx} className={`flex gap-3 text-sm leading-relaxed ${theme.muted}`}>
-                    <span className={`mt-2 h-1.5 w-1.5 rounded-full shrink-0 ${theme.dot}`} />
+                  <li key={idx} className={`flex gap-3 leading-relaxed ${theme.muted}`}>
+                    <span className={`mt-[9px] h-1.5 w-1.5 rounded-full shrink-0 ${theme.dot}`} />
                     <span className="text-base">{detail}</span>
                   </li>
                 ))}

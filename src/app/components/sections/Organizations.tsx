@@ -72,8 +72,8 @@ export default function Organizations({ theme, isDark, onNavigate }: Organizatio
           </div>
 
           <div className="mt-12">
-            <button onClick={() => onNavigate("certifications")} className={theme.btnGhost}>
-              View Certifications &amp; Trainings
+            <button onClick={() => onNavigate("affiliations")} className={theme.btnGhost}>
+              View Affiliations
             </button>
           </div>
         </motion.div>

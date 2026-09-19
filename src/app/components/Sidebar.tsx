@@ -49,15 +49,16 @@ export default function Sidebar(props: SidebarProps) {
   const { theme, isDark, activeSection, isMenuOpen, onToggleTheme, onToggleMenu, onNavigate } = props;
 
   const panel = isDark
-    ? "bg-[#0f1311]/95 border-white/10"
-    : "bg-white/95 border-gray-200";
+    ? "bg-[#0b0d0c]/90 border-white/10"
+    : "bg-[#fafaf8]/85 border-gray-200";
 
   const Logo = (
     <button
       onClick={() => onNavigate("about")}
-      className="text-xl font-bold tracking-tight text-brand hover:text-brand-strong transition-colors cursor-pointer"
+      className="group text-xl font-bold tracking-tight text-brand hover:text-brand-strong transition-colors cursor-pointer"
     >
       Matt Bianzon
+      <span className="block h-[2px] w-0 bg-brand transition-all duration-300 group-hover:w-full" aria-hidden="true" />
     </button>
   );
 
@@ -73,21 +74,38 @@ export default function Sidebar(props: SidebarProps) {
 
   const NavButtons = ({ vertical }: { vertical: boolean }) => (
     <>
-      {NAV_ITEMS.map((item) => {
+      {NAV_ITEMS.map((item, i) => {
         const Icon = item.icon;
         const isActive = activeSection === item.id;
         return (
           <motion.button
             key={item.id}
-            whileHover={{ x: vertical ? 3 : 0, scale: vertical ? 1 : 1.06 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ x: vertical ? 3 : 0 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => onNavigate(item.id)}
             aria-current={isActive ? "page" : undefined}
-            className={`flex items-center gap-3 rounded-md text-sm font-medium transition-colors duration-300 cursor-pointer will-change-transform ${
-              vertical ? "w-full px-3 py-2.5 text-left" : "px-3 py-1.5"
+            className={`group relative flex items-center gap-3 rounded-md text-sm font-medium transition-colors duration-300 cursor-pointer will-change-transform ${
+              vertical ? "w-full px-3 py-2 text-left" : "px-3 py-1.5"
             } ${isActive ? theme.navActive : theme.navBtn}`}
           >
-            <Icon size={17} className={isActive ? theme.icon : "opacity-70"} />
+            {/* Active left indicator — thin green bar */}
+            {vertical && (
+              <span
+                aria-hidden="true"
+                className={`absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-full bg-brand transition-all duration-300 ${
+                  isActive ? "opacity-100" : "opacity-0 group-hover:opacity-40"
+                }`}
+              />
+            )}
+            <span
+              className={`w-5 shrink-0 text-right font-mono text-[10px] tracking-widest ${
+                isActive ? "text-brand" : "opacity-50"
+              }`}
+              aria-hidden="true"
+            >
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <Icon size={16} className={isActive ? theme.icon : "opacity-70 transition-opacity group-hover:opacity-100"} />
             {item.label}
           </motion.button>
         );
@@ -97,37 +115,38 @@ export default function Sidebar(props: SidebarProps) {
 
   return (
     <>
-      {/* Desktop: fixed left sidebar */}
+      {/* Desktop: fixed left sidebar — floating panel, glass blur */}
       <motion.aside
         initial={{ x: -80, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-50 w-64 flex-col backdrop-blur-md border-r transition-colors duration-500 ${panel}`}
+        className={`glass hidden lg:flex fixed left-0 top-0 bottom-0 z-50 w-64 flex-col border-r transition-colors duration-500 ${panel}`}
       >
-        <div className="px-6 py-6 border-b transition-colors duration-500 border-inherit">
+        <div className="px-6 py-7 border-b transition-colors duration-500 border-inherit">
           {Logo}
-          <p className={`mt-1 text-[11px] uppercase tracking-[0.25em] ${theme.faint}`}>
+          <p className={`mt-1.5 flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] ${theme.faint}`}>
+            <span className="status-dot" aria-hidden="true" />
             Creative Portfolio
           </p>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 py-6 flex flex-col gap-1" aria-label="Main navigation">
+        <nav className="flex-1 overflow-y-auto px-4 py-6 flex flex-col gap-0.5" aria-label="Main navigation">
           <NavButtons vertical />
         </nav>
 
-        <div className="px-4 py-4 border-t flex items-center justify-between transition-colors duration-500 border-inherit">
-          <span className={`text-[10px] uppercase tracking-[0.2em] ${theme.faint}`}>
+        <div className="px-6 py-4 border-t flex items-center justify-between transition-colors duration-500 border-inherit">
+          <span className={`font-mono text-[10px] uppercase tracking-[0.2em] ${theme.faint}`}>
             © 2026 Matt
           </span>
           {ThemeToggle}
         </div>
       </motion.aside>
 
-      {/* Mobile / tablet: compact top bar */}
+      {/* Mobile / tablet: compact floating top bar */}
       <motion.header
         initial={{ y: -60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className={`lg:hidden sticky top-0 z-50 backdrop-blur-md border-b transition-colors duration-500 ${panel}`}
+        className={`glass lg:hidden sticky top-0 z-50 border-b transition-colors duration-500 ${panel}`}
       >
         <div className="px-5 py-3.5 flex items-center justify-between">
           {Logo}

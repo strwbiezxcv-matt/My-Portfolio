@@ -1,5 +1,0 @@
-﻿377: const printRef = useRef<HTMLDivElement>(null);
-378: const wrapRef = useRef<HTMLDivElement>(null);
-390: const el = wrapRef.current;
-626: if (paperRef.current && printRef.current) {
-628: printRef.current.innerHTML = paperRef.current.innerHTML;

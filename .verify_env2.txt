@@ -1,4 +1,0 @@
-typescript: False
-vite: True
-react: True
-fixed-folder: False

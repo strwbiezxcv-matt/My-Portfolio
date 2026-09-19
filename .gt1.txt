@@ -1,5 +1,0 @@
-FINDSTR: Cannot open exec
-FINDSTR: Cannot open /c:resume-a4
-FINDSTR: Cannot open /c:resume-print-root
-FINDSTR: Cannot open /c:dueRead
-FINDSTR: Cannot open src\app\components\ResumeEditor.tsx\ 
