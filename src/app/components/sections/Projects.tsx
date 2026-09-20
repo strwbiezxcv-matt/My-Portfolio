@@ -1,13 +1,34 @@
-﻿import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { ChevronLeft, ChevronRight, Github, ExternalLink, Star, Volume2, VolumeX } from "lucide-react";
+import { Github, ExternalLink, Star, Volume2, VolumeX, Sparkles } from "lucide-react";
+import { SiReact, SiTypescript, SiSupabase } from "react-icons/si";
+import type { ComponentType } from "react";
 import type { Theme } from "../../theme";
 import { projects, type Project } from "../../data";
 import { initSoundPrefs, isMuted, setMuted, playHover, playSelect } from "../../utils/sound";
 
-/* Learnix is the featured project — it is always the default active/front card.
-   We look it up by title so it stays featured regardless of array position. */
-const learnixStartIndex = projects.findIndex((p) => p.title === "Learnix");
+const techIcons: Record<string, ComponentType<{ size?: number; className?: string }>> = {
+  React: SiReact,
+  TypeScript: SiTypescript,
+  Supabase: SiSupabase,
+  AI: Sparkles,
+};
+
+function TechChip({ name, theme }: { name: string; theme: Theme }) {
+  const Icon = techIcons[name];
+  return (
+    <span
+      className={`tech-chip group/tech ring-glow inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 font-mono text-[11px] font-medium tracking-wide ${theme.chip}`}
+    >
+      {Icon ? (
+        <Icon size={14} className="shrink-0 text-brand transition-colors duration-300 group-hover/tech:text-brand-strong" />
+      ) : (
+        <span className="size-1.5 shrink-0 rounded-full bg-brand" aria-hidden="true" />
+      )}
+      {name}
+    </span>
+  );
+}
 
 interface ProjectsProps {
   theme: Theme;
@@ -15,38 +36,9 @@ interface ProjectsProps {
   onNavigate: (section: string) => void;
 }
 
-type Slot = {
-  x: number;        // % translateX
-  y: number;        // px translateY
-  rotate: number;   // deg
-  scale: number;
-  opacity: number;
-  zIndex: number;
-};
-
-/* Stacked slot layout: [far-left] [left] [ACTIVE] [right] [far-right] */
-function slotFor(offset: number, reduced: boolean): Slot {
-  const r = (deg: number) => (reduced ? 0 : deg);
-  switch (offset) {
-    case 0:
-      return { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1, zIndex: 50 };
-    case -1:
-      return { x: -58, y: 14, rotate: r(-7), scale: 0.9, opacity: 0.75, zIndex: 40 };
-    case 1:
-      return { x: 58, y: 14, rotate: r(7), scale: 0.9, opacity: 0.75, zIndex: 40 };
-    case -2:
-      return { x: -102, y: 30, rotate: r(-13), scale: 0.8, opacity: 0.35, zIndex: 30 };
-    case 2:
-      return { x: 102, y: 30, rotate: r(13), scale: 0.8, opacity: 0.35, zIndex: 30 };
-    default:
-      return { x: 0, y: 60, rotate: 0, scale: 0.7, opacity: 0, zIndex: 0 };
-  }
-}
-
-function ProjectCardBody({ project, isActive, theme }: { project: Project; isActive: boolean; theme: Theme }) {
-    return (
+function ProjectCardBody({ project, theme }: { project: Project; theme: Theme }) {
+  return (
     <div className="flex h-full w-full flex-col p-5 sm:p-7">
-      {/* Project image (optional — only renders when provided) */}
       {project.image && (
         <div className="group/img relative mb-5 w-full overflow-hidden rounded-lg border border-gray-200/70 bg-gray-100 dark:border-white/10 dark:bg-gray-800">
           <img
@@ -57,7 +49,6 @@ function ProjectCardBody({ project, isActive, theme }: { project: Project; isAct
         </div>
       )}
 
-      {/* Tags */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <span className="inline-flex items-center rounded-md bg-gray-900 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white dark:bg-gray-100 dark:text-gray-900">
           {project.category}
@@ -72,70 +63,44 @@ function ProjectCardBody({ project, isActive, theme }: { project: Project; isAct
             <Star size={11} /> Featured
           </span>
         )}
-        {project.comingSoon && (
-          <span className={`inline-flex items-center rounded-md border px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.18em] ${theme.chip}`}>
-            Not Available Yet
-          </span>
-        )}
       </div>
 
       <h3 className="text-xl font-bold tracking-tight sm:text-2xl">{project.title}</h3>
       <p className={`mt-2 text-sm leading-relaxed ${theme.muted}`}>{project.description}</p>
 
-      {/* Tech + links */}
       <div className="mt-4 flex flex-wrap items-center gap-1.5">
         {project.technologies.map((tech) => (
-          <span
-            key={tech}
-            className={`rounded border px-2 py-0.5 text-[11px] font-medium ${theme.muted} border-gray-200 dark:border-white/10`}
-          >
-            {tech}
-          </span>
+          <TechChip key={tech} name={tech} theme={theme} />
         ))}
       </div>
 
-      {isActive && (project.liveUrl || project.githubUrl) && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {project.liveUrl && (
-            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={theme.btnPrimary}>
-              <ExternalLink size={15} /> {project.liveLabel ?? "Live Demo"}
-            </a>
-          )}
-          {project.githubUrl && (
-            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className={theme.btnGhost}>
-              <Github size={15} /> {project.githubLabel ?? "GitHub"}
-            </a>
-          )}
+      {(project.liveUrl || project.githubUrl) && (
+        <div className="mt-auto pt-5">
+          <div className="flex flex-wrap gap-2">
+            {project.liveUrl && (
+              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className={theme.btnPrimary}>
+                <ExternalLink size={15} /> {project.liveLabel ?? "Live Demo"}
+              </a>
+            )}
+            {project.githubUrl && (
+              <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className={theme.btnGhost}>
+                <Github size={15} /> {project.githubLabel ?? "GitHub"}
+              </a>
+            )}
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
-  const [active, setActive] = useState(() => (learnixStartIndex >= 0 ? learnixStartIndex : 0));
+export default function Projects({ theme, isDark }: ProjectsProps) {
   const [soundOn, setSoundOn] = useState<boolean>(() => (typeof window === "undefined" ? true : !isMuted()));
-  const [reduced, setReduced] = useState(false);
-  const touchStartX = useRef<number | null>(null);
-  const count = projects.length;
 
   useEffect(() => {
     initSoundPrefs();
     setSoundOn(!isMuted());
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReduced(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
   }, []);
-
-  const goTo = useCallback(
-    (index: number, announce: boolean) => {
-      setActive(((index % count) + count) % count);
-      if (announce) playSelect();
-    },
-    [count]
-  );
 
   const toggleSound = () => {
     const next = !soundOn;
@@ -144,31 +109,8 @@ export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
     if (next) playSelect();
   };
 
-  const offsetFor = (index: number) => {
-    let offset = index - active;
-    if (offset > count / 2) offset -= count;
-    if (offset < -count / 2) offset += count;
-    return offset;
-  };
-
-  /* Touch swipe */
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    touchStartX.current = null;
-    if (Math.abs(dx) < 50) return;
-    goTo(active + (dx < 0 ? 1 : -1), true);
-  };
-
-  const duration = reduced ? 0.15 : 0.5;
-  const ease = [0.25, 0.46, 0.45, 0.94] as const;
-
   return (
-    <section id="projects" className={`relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-20 sm:px-6 ${theme.tintAlt}`}>
-      {/* Technical grid backdrop */}
+    <section id="projects" className={`relative flex items-center justify-center overflow-hidden px-4 py-20 sm:px-6 ${theme.tintAlt}`}>
       <div className="pointer-events-none absolute inset-0 bg-grid-fine opacity-60" aria-hidden="true" />
       <span className="deco-plus pointer-events-none absolute" style={{ top: "10%", left: "5%" }} aria-hidden="true" />
       <span className="deco-plus pointer-events-none absolute" style={{ bottom: "12%", right: "6%" }} aria-hidden="true" />
@@ -179,145 +121,74 @@ export default function Projects({ theme, isDark, onNavigate }: ProjectsProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          {/* Section header */}
           <div className="mb-6 flex items-center justify-between gap-4">
-            
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={toggleSound}
-                aria-label={soundOn ? "Mute interaction sounds" : "Enable interaction sounds"}
-                title={soundOn ? "Mute sounds" : "Enable sounds"}
-                className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border transition-colors duration-300 ${
+            <div className="flex items-center gap-3">
+              <span className="section-num-rule" />
+              <span className="section-num">03 · PROJECTS</span>
+              <span className="section-num-rule" />
+            </div>
+            <button
+              type="button"
+              onClick={toggleSound}
+              aria-label={soundOn ? "Mute sound effects" : "Unmute sound effects"}
+              className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border transition-colors duration-300 ${theme.navBtn}`}
+            >
+              {soundOn ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2 md:gap-8">
+            {projects.map((project, index) => (
+              <motion.div
+                key={project.title}
+                initial={{ opacity: 0, x: 44, y: 44 }}
+                whileInView={{
+                  opacity: 1,
+                  /* circle-roll entrance: the card glides along a quarter-arc
+                     (offset x+y in sync) while staying perfectly upright. */
+                  x: [44, 18, 0],
+                  y: [44, 10, 0],
+                }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  delay: index * 0.12,
+                  duration: 0.9,
+                  times: [0, 0.55, 1],
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+                whileHover={{ y: -6 }}
+                onMouseEnter={() => playHover()}
+                className={`group relative cursor-default rounded-2xl border shadow-lg transition-shadow duration-300 will-change-transform hover:shadow-2xl ${
                   isDark
-                    ? "border-white/15 text-gray-300 hover:border-brand/50 hover:text-brand"
-                    : "border-gray-300 text-gray-500 hover:border-brand/50 hover:text-brand"
+                    ? "border-white/10 bg-[#161c18] hover:shadow-black/50"
+                    : "border-gray-200 bg-white hover:shadow-black/10"
                 }`}
               >
-                {soundOn ? <Volume2 size={16} /> : <VolumeX size={16} />}
-              </button>
-              <button
-                type="button"
-                onClick={() => onNavigate("contact")}
-                className={`cursor-pointer text-xs uppercase tracking-[0.25em] font-pixel transition-colors duration-300 sm:text-sm ${theme.link}`}
-              >
-                ALL PROJECTS â†’
-              </button>
-            </div>
-          </div>
-
-          {/* Title + subtitle â€” same style as the other sections */}
-          <div className="text-center">
-            <div className="mb-4 flex items-center justify-center gap-3">
-              <span className="section-num-rule" />
-              <span className="section-num">03 Â· PROJECTS</span>
-              <span className="section-num-rule" />
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Projects</h2>
-            <p className={`mb-10 text-sm uppercase tracking-[0.2em] ${theme.muted}`}>
-              Things I&apos;ve built, designed, and worked on.
-            </p>
-          </div>
-
-          {/* Card stack */}
-          <div
-            className="relative mx-auto h-[540px] w-full max-w-xl select-none sm:h-[520px]"
-            style={{ perspective: "1200px" }}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-          >
-            {projects.map((project, index) => {
-              const offset = offsetFor(index);
-              const slot = slotFor(offset, reduced);
-              const isActive = offset === 0;
-              return (
-                <motion.div
-                  key={project.title}
-                  initial={false}
-                  animate={{
-                    x: `${slot.x}%`,
-                    y: slot.y,
-                    rotate: slot.rotate,
-                    scale: slot.scale,
-                    opacity: slot.opacity,
-                  }}
-                  transition={{ duration, ease }}
-                  style={{ zIndex: slot.zIndex }}
-                  whileHover={
-                    isActive
-                      ? { y: -12, scale: 1.02, rotate: 0 }
-                      : {
-                          y: slot.y - 10,
-                          rotate: slot.rotate * 0.4,
-                          scale: slot.scale + 0.02,
-                          opacity: Math.min(slot.opacity + 0.2, 1),
-                        }
-                  }
-                  onMouseEnter={() => {
-                    if (!reduced) playHover();
-                  }}
-                  onClick={() => !isActive && goTo(index, true)}
-                  role={isActive ? "group" : "button"}
-                  aria-label={isActive ? `Active project: ${project.title}` : `Show project: ${project.title}`}
-                  className={`absolute inset-x-0 top-0 mx-auto w-full cursor-pointer rounded-2xl border shadow-lg transition-shadow duration-300 will-change-transform hover:shadow-2xl ${
-                    isDark
-                      ? "border-white/10 bg-[#161c18] hover:shadow-black/50"
-                      : "border-gray-200 bg-white hover:shadow-black/10"
-                  }`}
+                <motion.span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -inset-3 hidden md:block"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: [0, 1, 0] }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4 + index * 0.12, duration: 1.6, ease: "easeInOut" }}
                 >
-                  <ProjectCardBody project={project} isActive={isActive} theme={theme} />
-                </motion.div>
-              );
-            })}
+                  <motion.span
+                    className="absolute inset-0 block"
+                    initial={{ rotate: 0 }}
+                    whileInView={{ rotate: 360 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 + index * 0.12, duration: 1.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  >
+                    <span className="absolute left-1/2 top-0 size-1.5 -translate-x-1/2 rounded-full bg-brand ring-glow" />
+                  </motion.span>
+                </motion.span>
+
+                <ProjectCardBody project={project} theme={theme} />
+              </motion.div>
+            ))}
           </div>
-
-          {/* Prev / next controls + dots */}
-          <div className="mt-8 flex items-center justify-center gap-4">
-            <button
-              type="button"
-              onClick={() => goTo(active - 1, true)}
-              aria-label="Previous project"
-              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border transition-colors duration-300 ${
-                isDark
-                  ? "border-white/15 text-gray-300 hover:border-brand/50 hover:text-brand"
-                  : "border-gray-300 text-gray-600 hover:border-brand/50 hover:text-brand"
-              }`}
-            >
-              <ChevronLeft size={18} />
-            </button>
-
-            <div className="flex items-center gap-2">
-              {projects.map((project, index) => (
-                <button
-                  key={project.title}
-                  type="button"
-                  aria-label={`Go to project: ${project.title}`}
-                  onClick={() => goTo(index, true)}
-                  className={`h-2 cursor-pointer rounded-full transition-all duration-300 ${
-                    index === active ? "w-6 bg-brand" : isDark ? "w-2 bg-white/20 hover:bg-white/40" : "w-2 bg-gray-300 hover:bg-gray-400"
-                  }`}
-                />
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => goTo(active + 1, true)}
-              aria-label="Next project"
-              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border transition-colors duration-300 ${
-                isDark
-                  ? "border-white/15 text-gray-300 hover:border-brand/50 hover:text-brand"
-                  : "border-gray-300 text-gray-600 hover:border-brand/50 hover:text-brand"
-              }`}
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
-
         </motion.div>
       </div>
     </section>
   );
 }
-
-

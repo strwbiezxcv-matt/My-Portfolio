@@ -6,7 +6,6 @@ import About from "./components/sections/About";
 import Experience from "./components/sections/Experience";
 import Projects from "./components/sections/Projects";
 import Organizations from "./components/sections/Organizations";
-import Affiliations from "./components/sections/Affiliations";
 import Certifications from "./components/sections/Certifications";
 import Contact from "./components/sections/Contact";
 import Recommendations from "./components/sections/Recommendations";
@@ -18,7 +17,6 @@ const SECTION_IDS = [
   "experience",
   "projects",
   "work",
-  "affiliations",
   "certifications",
   "recommendations",
   "materials",
@@ -99,8 +97,6 @@ export default function App() {
         return <Projects theme={theme} isDark={isDark} onNavigate={navigate} />;
       case "work":
         return <Organizations theme={theme} isDark={isDark} onNavigate={navigate} />;
-      case "affiliations":
-        return <Affiliations theme={theme} onNavigate={navigate} />;
       case "certifications":
         return <Certifications theme={theme} onNavigate={navigate} />;
       case "recommendations":

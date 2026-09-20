@@ -1,4 +1,4 @@
-import { type ComponentType } from "react";
+import { type ComponentType, useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Code, Palette, Zap, ArrowRight, Instagram, Facebook, Mail, Cpu, SquareCode } from "lucide-react";
 import {
@@ -60,42 +60,91 @@ const socials = [
 
 const reveal = { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const };
 
-/* ── Organization-logo carousel ─────────────────────────────────────────────────
-   Straight horizontal strip that lives in the Hero. The logos stay upright (no
-   rotation, no curve), keep their own aspect ratio and float on no
-   background/container of their own. The complete set is repeated (see
-   LOGO_SET_COPIES) and drifts exactly one set to the left on a slow linear loop,
-   so a set is always entering as the previous one leaves. Motion uses `left`
-   (not transform) on purpose: a transformed ancestor would isolate the logos from
-   the page backdrop and reveal the opaque box of the two logos that ship with a
-   white/cream background. */
-const LOGO_SET_COPIES = 7; // covers wide/ultra-wide strip viewports with no gap
+/* ── Organization-logo carousel: half-circle, floating, no background ── */
+const LOGO_SIZE = 40;   // slightly larger than the original
+const ARC_RADIUS = 110; // half-circle radius (px)
 
-function OrgLogoGroup() {
+function OrgLogo({ org, index, total }: { org: typeof organizations[0]; index: number; total: number }) {
+  const angle = (index / Math.max(total, 1)) * Math.PI; // half-circle: 0 → π
+  const x = Math.cos(angle) * ARC_RADIUS;
+  const y = -Math.abs(Math.sin(angle) * ARC_RADIUS); // negative = above center (flat side faces down toward avatar)
+  const opacity = 0.6 + 0.4 * Math.sin(angle); // brighter in the middle, dimmer at edges
+
   return (
-    <div className="org-marquee-group">
-      {organizations.map((org) => (
-        <img
-          key={org.name}
-          src={org.image}
-          alt={org.name}
-          draggable={false}
-          className={`org-marquee-logo ${org.blend === "multiply" ? "mix-blend-multiply" : ""}`}
-        />
-      ))}
-    </div>
+    <motion.img
+      key={org.name}
+      src={org.image}
+      alt={org.name}
+      width={LOGO_SIZE}
+      height={LOGO_SIZE}
+      className="absolute object-contain"
+      style={{
+        left: `calc(50% + ${x}px)`,
+        top: `calc(50% + ${y}px)`,
+        transform: "translate(-50%, -50%)",
+        opacity,
+      }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity, scale: 1 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{ scale: 1.2, opacity: 1 }}
+    />
   );
 }
 
 function OrgCarousel() {
+  const [rotation, setRotation] = useState(0);
+
+  useEffect(() => {
+    let frame = 0;
+    const animate = () => {
+      setRotation((r) => (r + 0.1) % 360);
+      frame = requestAnimationFrame(animate);
+    };
+    animate();
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const halfCount = Math.ceil(organizations.length / 2);
+  const visibleOrgs = [...organizations, ...organizations]; // duplicate for seamless loop
+
   return (
-    <div className="org-marquee">
-      {/* The complete set is repeated enough times that the track always covers the
-          strip viewport — as copy #1 scrolls away, the identical copies behind it
-          are already in place (loop distance = exactly ONE set, see --org-shift). */}
-      {Array.from({ length: LOGO_SET_COPIES }, (_, copy) => (
-        <OrgLogoGroup key={copy} />
-      ))}
+    <div className="relative flex items-center justify-center" style={{ width: ARC_RADIUS * 2, height: ARC_RADIUS }}>
+      <div
+        className="absolute inset-0 rounded-full opacity-20"
+        style={{
+          width: ARC_RADIUS * 2,
+          height: ARC_RADIUS * 2,
+          left: "50%",
+          top: "0%",
+          transform: "translateX(-50%)",
+          boxShadow: "0 0 30px rgba(78, 115, 51, 0.15)",
+        }}
+      />
+      <motion.div
+        className="absolute flex items-end justify-center"
+        style={{
+          width: ARC_RADIUS * 2,
+          height: ARC_RADIUS,
+          left: "50%",
+          top: "0%",
+          transform: "translateX(-50%)",
+        }}
+        animate={{ rotate: rotation }}
+        transition={{ duration: 0.1, ease: "linear" }}
+      >
+        {visibleOrgs.map((org, i) => {
+          const displayIndex = i % organizations.length;
+          return (
+            <OrgLogo
+              key={`${org.name}-${i}`}
+              org={org}
+              index={displayIndex}
+              total={organizations.length}
+            />
+          );
+        })}
+      </motion.div>
     </div>
   );
 }
@@ -128,15 +177,15 @@ type SkillItem = {
 };
 
 const techStack: SkillItem[] = [
-  { name: "C++", years: "2 yrs", icon: SiCplusplus },
+  { name: "C++", years: "3 yrs", icon: SiCplusplus },
   { name: "Python", years: "1 yr", icon: SiPython },
-  { name: "Java", years: "1 ½ yrs", icon: DiJava },
+  { name: "Java", years: "1½ yrs", icon: DiJava },
   { name: "JavaScript", years: "½ yr", icon: SiJavascript },
   { name: "HTML", years: "½ yr", icon: SiHtml5 },
   { name: "CSS", years: "½ yr", icon: SiCss },
   { name: "TypeScript", years: "½ yr", icon: SiTypescript },
   { name: "Node.js", years: "½ yr", icon: SiNodedotjs },
-  { name: "SQL", years: "½ yr", icon: SiMysql },
+  { name: "MySQL", years: "½ yr", icon: SiMysql },
   { name: "Supabase", years: "½ yr", icon: SiSupabase },
 ];
 
@@ -160,7 +209,7 @@ const skillChipClass =
 
 export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) {
   return (
-    <div className={`relative overflow-hidden ${theme.tintAlt}`}>
+    <section id="about" className={`relative min-h-screen flex flex-col px-6 py-20 overflow-hidden ${theme.tintAlt}`}>
       {/* Ambient decorations — merged hero + about accents */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="absolute inset-0 bg-grid-fine opacity-60" />
@@ -175,9 +224,8 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
         <span className="tech-label absolute top-6 right-8 hidden md:block">// Computer Engineering</span>
       </div>
       
-      {/* ── HERO: one viewport tall, centered, with the organization-logo strip
-             docked at its bottom so the carousel is visible without scrolling ── */}
-      <section id="home" className="relative flex min-h-[100svh] w-full items-center justify-center px-6 pt-24 pb-32">
+            {/* ── HERO: Full viewport, centered composition ── */}
+      <div className="flex-1 flex items-center justify-center min-h-screen">
         <div className="relative mx-auto max-w-6xl w-full text-center corner-frame">
           <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -192,7 +240,7 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
           </div>
 
           {/* ── Intro block (former Home hero, merged into About) ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center text-left">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16 text-left">
             <motion.div
               initial={{ opacity: 0, scale: 0.92 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -288,7 +336,7 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
                     whileHover={{ scale: 1.1, y: -2 }}
                     whileTap={{ scale: 0.92 }}
                     onClick={() => window.open(social.href, "_blank")}
-                    className={`p-3 rounded-full border transition-colors duration-100 ${theme.chip} hover:bg-brand/20 will-change-transform`}
+                    className={`p-3 rounded-full border transition-colors duration-300 ${theme.chip} hover:bg-brand/20 will-change-transform`}
                     aria-label={social.icon.name}
                   >
                     <social.icon size={18} />
@@ -297,43 +345,17 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
               </motion.div>
             </div>
           </div>
-          </motion.div>
-        </div>
 
-        {/* Organization logos — full-bleed drifting strip docked at the bottom of
-            the hero (no transform ancestor, so the logos keep blending cleanly). */}
-        <section
-          aria-label="Organizations"
-          className="absolute inset-x-0 bottom-8 w-full overflow-hidden py-3"
-        >
-          <OrgCarousel />
-        </section>
-      </section>
-
-      {/* ── ABOUT: separate section below the hero — revealed only after scrolling ── */}
-      <section id="about" className="relative w-full px-6 pt-16 pb-24">
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand/50 to-transparent"
-        />
-        <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="relative mx-auto w-full max-w-6xl"
-        >
           {/* ── About Me — futuristic developer interface ── */}
           <div className="mx-auto max-w-5xl text-left">
             <div className="mb-3 flex items-center gap-3">
               <span className="section-num-rule" />
               <span className="section-num">ABOUT</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight [text-shadow:0_0_28px_rgba(122,159,84,0.18)]">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
               About Me
             </h2>
-            {/* Two visual lines on desktop — width-driven only, no manual <br> tags. */}
-            <p className={`text-lg md:text-xl leading-relaxed max-w-[50rem] ${theme.text}`}>
+            <p className={`text-lg md:text-xl leading-relaxed max-w-xl ${theme.text}`}>
               I&apos;m a passionate creative designer, layout artist, and web developer with 3 years of experience turning ideas into engaging digital experiences.
             </p>
           </div>
@@ -355,9 +377,9 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
                   transition={{ delay: i * 0.04, duration: 0.4 }}
                   className={skillChipClass}
                 >
+                  <SkillRing percent={t.percent} />
                   <t.icon size={20} className="shrink-0 text-gray-600 dark:text-gray-300 transition-colors duration-300 group-hover:text-brand" />
                   <span className="text-sm font-medium leading-tight">{t.name}</span>
-                  {t.years && <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">{t.years}</span>}
                 </motion.div>
               ))}
             </div>
@@ -380,9 +402,9 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
                   transition={{ delay: i * 0.04, duration: 0.4 }}
                   className={skillChipClass}
                 >
+                  <SkillRing percent={t.percent} />
                   <t.icon size={20} className="shrink-0 text-gray-600 dark:text-gray-300 transition-colors duration-300 group-hover:text-brand" />
                   <span className="text-sm font-medium leading-tight">{t.name}</span>
-                  {t.years && <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">{t.years}</span>}
                 </motion.div>
               ))}
             </div>
@@ -456,7 +478,8 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
             ))}
           </div>
         </motion.div>
-      </section>
-    </div>
+      </div>
+      </div>
+    </section>
   );
 }

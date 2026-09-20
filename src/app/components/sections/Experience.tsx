@@ -78,8 +78,8 @@ export default function Experience({ theme, onNavigate }: ExperienceProps) {
         </div>
 
         <div className="text-center mt-12">
-          <button onClick={() => onNavigate("affiliations")} className={theme.btnGhost}>
-            View Affiliations &amp; Leadership
+          <button onClick={() => onNavigate("work")} className={theme.btnGhost}>
+            View Organizations &amp; Affiliations
           </button>
         </div>
       </div>

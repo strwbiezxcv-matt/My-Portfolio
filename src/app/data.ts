@@ -6,20 +6,20 @@ import bulsuoneImg from "../imports/4.png";
 import bulsuEngImg from "../imports/5.png";
 import mhcImg from "../imports/6.png";
 import dhevcImg from "../imports/7.png";
+import cpe4bImg from "../imports/CPE4B.png";
 import cert2Img from "../imports/cert-2.jpg";
 import visualProgrammingCertImg from "../imports/Visual Programming and APK Development Certificate.jpg";
 import codeToCareerCertImg from "../imports/code to career.png";
 import likhAsenyocertImg from "../imports/LIKHASENYO CERT.png";
 import pubmat1 from "../imports/mhc_achievers_(1).png";
-import pubmat2 from "../imports/cpe_achievers_(27).png";
-import pubmat3 from "../imports/medal_(3).png";
-import pubmat4 from "../imports/566233249_1232512482016657_5023862266293251196_n.png";
 import pubmat5 from "../imports/ANGARA_ATHLETES_(5).png";
-import pubmat6 from "../imports/ICEPEP_PUBMATS_(4).png";
-import pubmat7 from "../imports/PUBMATS_(38).png";
 import pubmat8 from "../imports/PUBMATS_(19).png";
 import pubmat9 from "../imports/ayos_lang..._(9).png";
 import pubmat10 from "../imports/man_up_speak_up_(2).png";
+import thirdYearImg from "../imports/3RD YEAR.png";
+import allSaintsDayImg from "../imports/ALL_SAINTS_DAY.png";
+import independenceDayImg from "../imports/INDEPENDENCE DAY.png";
+import suicideAwarenessImg from "../imports/SUICIDE_AWARENESS_MONTH.png";
 import learnixImg from "../imports/Learnix.png";
 import learnixProjectImg from "../imports/learnix_image.png";
 import internixCapImg from "../imports/Internix.png";
@@ -29,6 +29,7 @@ import salesTrainingCertImg from "../imports/sales-training-certificate.png";
 import mhcCertImg from "../imports/MHC CERT.png";
 import prsaCertImg from "../imports/PRSA CERT.png";
 import buildingWealthCertImg from "../imports/building-your-wealth-certificate.png";
+import tinigCertImg from "../imports/tinig.png";
 
 /* PROJECTS (new stacked-card section)
    To add/edit a project: append an entry below. Title, category, description, and technologies are required;
@@ -75,70 +76,97 @@ export const projects: Project[] = [
     liveLabel: "LIVE",
     githubLabel: "GITHUB",
   },
-  // ◻ COMING SOON — these remain in the stack but only show generic COMING SOON messaging
-  //   (no real project names, categories, descriptions, technologies, or links are shown).
-  {
-    title: "PROJECT COMING SOON",
-    category: "COMING SOON",
-    description: "More projects are currently in development. Stay tuned.",
-    technologies: [],
-    comingSoon: true,
-  },
-  {
-    title: "PROJECT COMING SOON",
-    category: "COMING SOON",
-    description: "More projects are currently in development. Stay tuned.",
-    technologies: [],
-    comingSoon: true,
-  },
-  {
-    title: "PROJECT COMING SOON",
-    category: "COMING SOON",
-    description: "More projects are currently in development. Stay tuned.",
-    technologies: [],
-    comingSoon: true,
-  },
-  {
-    title: "PROJECT COMING SOON",
-    category: "COMING SOON",
-    description: "More projects are currently in development. Stay tuned.",
-    technologies: [],
-    comingSoon: true,
-  },
-  {
-    title: "PROJECT COMING SOON",
-    category: "COMING SOON",
-    description: "More projects are currently in development. Stay tuned.",
-    technologies: [],
-    comingSoon: true,
-  },
 ];
 
-export const organizations = [
-  { name: "Public Relation and Societal Affairs", image: prsaImg, blend: "multiply" as const },
-  { name: "Easecore Software and IT Corp.", image: easecoreImg, blend: "multiply" as const },
-  { name: "Institute of Computer Engineers of the Philippines - Student Edition", image: icpepImg, blend: "screen" as const },
-  { name: "Office of the Vice President - Volunteers Network", image: crestImg, blend: "multiply" as const },
-  { name: "BulSUONE Bustos", image: bulsuoneImg, blend: "multiply" as const },
-  { name: "College of Engineering", image: bulsuEngImg, blend: "multiply" as const },
-  { name: "Mental Health Coalition", image: mhcImg, blend: "multiply" as const },
-  { name: "Double Headed Eagles Volunteers' Community", image: dhevcImg, blend: "screen" as const },
+export type OrgAffiliation = { role: string; period: string };
+
+export const organizations: {
+  name: string;
+  image: string;
+  blend: "multiply" | "screen" | "normal";
+  /** Existing affiliations, grouped into the organization they belong to. */
+  affiliations?: OrgAffiliation[];
+}[] = [
+  {
+    name: "Public Relation and Societal Affairs Committee – Bustos LSC (PRSA)",
+    image: prsaImg,
+    blend: "multiply",
+    affiliations: [{ role: "Associate", period: "2025-2026" }],
+  },
+  {
+    name: "Easecore Software and IT Corp.",
+    image: easecoreImg,
+    blend: "multiply",
+    affiliations: [{ role: "Part-time Graphic Artist", period: "2026-2027" }],
+  },
+  {
+    name: "Institute of Computer Engineers of the Philippines – Student Edition (ICPEP)",
+    image: icpepImg,
+    blend: "normal",
+    affiliations: [
+      { role: "Social Media Content Editor", period: "2025-2026" },
+      { role: "OIC Chairperson — BS Computer Engineering", period: "2025-2026" },
+    ],
+  },
+  {
+    name: "Office of the Vice President – Volunteers Network (BulSU SG)",
+    image: crestImg,
+    blend: "multiply",
+    affiliations: [{ role: "Layout Artist", period: "2026-2027" }],
+  },
+  {
+    name: "BULSUONE Bustos",
+    image: bulsuoneImg,
+    blend: "multiply",
+    affiliations: [{ role: "Media and Publication Head", period: "2026-2027" }],
+  },
+  {
+    name: "College of Engineering – Bustos Campus (COE)",
+    image: bulsuEngImg,
+    blend: "multiply",
+    affiliations: [
+      { role: "COE Creatives", period: "2025-2026" },
+      { role: "Social Media Manager", period: "2026-2027" },
+    ],
+  },  {
+    name: "Mental Health Coalition – Bustos LSC (MHC)",
+    image: mhcImg,
+    blend: "multiply",
+    affiliations: [
+      { role: "Chief of Creatives", period: "2025-2026" },
+      { role: "Editor", period: "2026-2027" },
+    ],
+  },
+  {
+    name: "Double Headed Eagles Volunteers' Community (DHEVC)",
+    image: dhevcImg,
+    blend: "multiply",
+    affiliations: [{ role: "Public Relations Officer", period: "2025-2026" }],
+  },
+  {
+    name: "BSCPE 4B – Bachelor of Science in Computer Engineering",
+    image: cpe4bImg,
+    blend: "multiply",
+    affiliations: [
+      { role: "Media and Publication Officer — BSCPE 2B–3B", period: "2024-2025" },
+      { role: "Media and Publication Officer — BSCPE 4B", period: "2025-2026" },
+    ],
+  },
 ];
 
 export const pubmats = [
   { title: "MHC Achievers", category: "Achievement", image: pubmat1 },
-  { title: "All Souls' Day", category: "Faith", image: pubmat3 },
-  { title: "CPE Achievers", category: "Academic Excellence", image: pubmat2 },
-  { title: "Community Highlights", category: "Social Media", image: pubmat4 },
   { title: "Angara Athletes", category: "Sports", image: pubmat5 },
-  { title: "ICEPEP Event", category: "Conference", image: pubmat6 },
-  { title: "MHC Pantry", category: "Free Coffee", image: pubmat7 },
   { title: "Midterm Examination", category: "Good Luck Pubmat", image: pubmat8 },
   { title: "Nutrition Month", category: "Social", image: pubmat9 },
   { title: "Independence Day", category: "Holiday", image: pubmat10 },
   { title: "Learnix App Launch", category: "Technology", image: learnixImg },
   { title: "Women's Month Celebration", category: "Awareness", image: womensMonthImg },
   { title: "Infographics Collection", category: "Design", image: infographicsImg },
+  { title: "Achievers", category: "Design", image: thirdYearImg },
+  { title: "All Saints Day", category: "Holiday", image: allSaintsDayImg },
+  { title: "Independence Day", category: "Holiday", image: independenceDayImg },
+  { title: "Suicide Awareness Month", category: "Awareness", image: suicideAwarenessImg },
 ];
 
 export const experience = [
@@ -172,21 +200,6 @@ export const experience = [
       "Gained practical skills in troubleshooting electrical and mechanical systems.",
     ],
   },
-];
-
-export const affiliations = [
-  { role: "Media and Publication Officer", org: "BSCPE 2B – BSCPE 4B", period: "2024-2026" },
-  { role: "OIC Chairperson", org: "Bachelor of Science in Computer Engineering", period: "2025-2026" },
-  { role: "Public Relations Officer", org: "Double Headed Eagles Volunteers' Community (DHEVC)", period: "2025-2026" },
-  { role: "Social Media Content Editor", org: "Institute of Computer Engineers of the Philippines – Student Edition", period: "2025-2026" },
-  { role: "Chief of Creatives", org: "Mental Health Coalition – Bustos LSC (MHC)", period: "2025-2026" },
-  { role: "Associate", org: "Public Relations and Societal Affairs Committee – Bustos LSC (PRSA)", period: "2025-2026" },
-  { role: "COE Creatives", org: "College of Engineering – Bustos Campus", period: "2025-2026" },
-  { role: "Social Media Manager", org: "College of Engineering – Bustos Campus", period: "2026-2027" },
-  { role: "Vice Chairperson", org: "Sports and Athletic Development Committee", period: "2026-2027" },
-  { role: "Media and Publication Head", org: "BULSUONE Bustos", period: "2026-2027" },
-  { role: "Editor", org: "Mental Health Coalition – Bustos LSC (MHC)", period: "2026-2027" },
-  { role: "Layout Artist", org: "BulSU SG – Office of the Vice President", period: "2026-2027" },
 ];
 
 export const certificates = [
@@ -272,6 +285,14 @@ export const seminars = [
     period: "Certificate",
     description: "Certificate of training and participation with the Public Relation and Societal Affairs (PRSA) Committee.",
     image: prsaCertImg,
+  },
+  {
+    title: "Tinig",
+    category: "Certificate",
+    type: "Certificate",
+    period: "Certificate",
+    description: "Certificate awarded for Tinig.",
+    image: tinigCertImg,
   },
 ];
 

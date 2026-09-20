@@ -423,3 +423,81 @@ html {
   flex: 1;
 }
 
+
+/* ── Organizations: horizontal, infinite logo carousel (between Hero and About) ──
+   Geometry lives here so the loop distance always matches the logo size:
+   one cycle = logo count × (logo + gap). Bump --org-count when logos change.
+   Movement animates `left` (never transform): a transformed/masked ancestor would
+   isolate the logos from the page backdrop and expose the opaque boxes of the
+   logos that ship on a white/cream background. */
+.org-marquee {
+  --org-count: 9;
+  --org-logo: 1.75rem; /* 28px — half the previous size */
+  --org-gap: 1rem;
+  --org-shift: calc(-1 * var(--org-count) * (var(--org-logo) + var(--org-gap)));
+  position: relative;
+  left: 0;
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: org-marquee 24s linear infinite;
+}
+
+.org-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--org-gap);
+  padding-right: var(--org-gap); /* trailing gap keeps the seam invisible */
+}
+
+.org-marquee-logo {
+  width: var(--org-logo);
+  height: var(--org-logo);
+  flex-shrink: 0;
+  object-fit: contain; /* always keeps the logo's original aspect ratio */
+  filter: drop-shadow(0 0 5px rgb(122 159 84 / 0.18));
+  transition: filter 300ms ease-out;
+}
+
+/* Subtle matte-green glow on the hovered/active logo — no spin, no neon. */
+.org-marquee-logo:hover,
+.org-marquee-logo:focus-visible {
+  filter: drop-shadow(0 0 9px rgb(122 159 84 / 0.45)) drop-shadow(0 0 20px rgb(78 115 51 / 0.2));
+}
+
+.dark .org-marquee-logo {
+  filter: drop-shadow(0 0 6px rgb(161 196 127 / 0.18));
+}
+
+.dark .org-marquee-logo:hover,
+.dark .org-marquee-logo:focus-visible {
+  filter: drop-shadow(0 0 9px rgb(161 196 127 / 0.4)) drop-shadow(0 0 20px rgb(122 159 84 / 0.2));
+}
+
+@keyframes org-marquee {
+  from { left: 0; }
+  to { left: var(--org-shift); }
+}
+
+/* Larger logos on wider screens, still a compact strip. */
+@media (min-width: 768px) {
+  .org-marquee {
+    --org-logo: 2.5rem;
+    --org-gap: 1.25rem;
+    animation-duration: 30s;
+  }
+}
+
+@media (min-width: 1024px) {
+  .org-marquee {
+    --org-logo: 3rem;
+    --org-gap: 1.5rem;
+    animation-duration: 36s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .org-marquee { animation: none; }
+}
+
