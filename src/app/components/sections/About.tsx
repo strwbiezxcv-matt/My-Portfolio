@@ -68,7 +68,10 @@ const reveal = { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const };
    so a set is always entering as the previous one leaves. Motion uses `left`
    (not transform) on purpose: a transformed ancestor would isolate the logos from
    the page backdrop and reveal the opaque box of the two logos that ship with a
-   white/cream background. */
+   white/cream background.
+   `multiply` is scoped to LIGHT mode only (`dark:mix-blend-normal`): over the dark
+   page backdrop multiply would crush every pixel toward black and leave the logos
+   invisible, so dark mode composites normally and keeps each logo's true colors. */
 const LOGO_SET_COPIES = 7; // covers wide/ultra-wide strip viewports with no gap
 
 function OrgLogoGroup() {
@@ -80,7 +83,7 @@ function OrgLogoGroup() {
           src={org.image}
           alt={org.name}
           draggable={false}
-          className={`org-marquee-logo ${org.blend === "multiply" ? "mix-blend-multiply" : ""}`}
+          className={`org-marquee-logo ${org.blend === "multiply" ? "mix-blend-multiply dark:mix-blend-normal" : ""}`}
         />
       ))}
     </div>
@@ -128,9 +131,9 @@ type SkillItem = {
 };
 
 const techStack: SkillItem[] = [
-  { name: "C++", years: "2 yrs", icon: SiCplusplus },
+  { name: "C++", years: "1 yr", icon: SiCplusplus },
   { name: "Python", years: "1 yr", icon: SiPython },
-  { name: "Java", years: "1 ½ yrs", icon: DiJava },
+  { name: "Java", years: "1 yr", icon: DiJava },
   { name: "JavaScript", years: "½ yr", icon: SiJavascript },
   { name: "HTML", years: "½ yr", icon: SiHtml5 },
   { name: "CSS", years: "½ yr", icon: SiCss },
