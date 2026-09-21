@@ -102,7 +102,7 @@ export const organizations: {
   {
     name: "Institute of Computer Engineers of the Philippines – Student Edition (ICPEP)",
     image: icpepImg,
-    blend: "normal",
+    blend: "multiply",
     affiliations: [
       { role: "Social Media Content Editor", period: "2025-2026" },
       { role: "OIC Chairperson — BS Computer Engineering", period: "2025-2026" },

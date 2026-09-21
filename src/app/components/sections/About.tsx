@@ -14,7 +14,9 @@ import {
   SiFigma,
   SiBlender,
   SiApachenetbeanside,
+  SiProteus,
   SiArduino,
+  SiCisco,
 } from "react-icons/si";
 /* Authentic brand marks: Devicons Java coffee-cup logo + Adobe Photoshop "Ps" */
 import { DiJava, DiPhotoshop } from "react-icons/di";
@@ -145,16 +147,17 @@ const techStack: SkillItem[] = [
 
 const tools: SkillItem[] = [
   { name: "Canva", years: "3 yrs", icon: CanvaMark },
-  { name: "Figma", years: "2 yrs", icon: SiFigma },
+  { name: "Figma", years: "1 yr", icon: SiFigma },
   { name: "Blender", years: "½ yr", icon: SiBlender },
   { name: "Photoshop", years: "", icon: DiPhotoshop },
 ];
 
 const ides: { name: string; icon: ComponentType<{ size?: number; className?: string }> }[] = [
-  { name: "VS Code", icon: SquareCode },
-  { name: "NetBeans", icon: SiApachenetbeanside },
+  { name: "Visual Studio Code", icon: SquareCode },
+  { name: "Apache NetBeans", icon: SiApachenetbeanside },
   { name: "Arduino IDE", icon: SiArduino },
-  { name: "Proteus", icon: Cpu },
+  { name: "Proteus", icon: SiProteus },
+  { name: "Cisco", icon: SiCisco}
 ];
 
 /* Unified futuristic chip/card style shared by Tech Stack, Tools and IDE */
@@ -175,7 +178,7 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
         <span className="pulse-dot absolute size-1.5 rounded-full bg-brand/50" style={{ top: "30%", right: "14%" }} />
         <span className="pulse-dot absolute size-1.5 rounded-full bg-brand/40" style={{ bottom: "26%", left: "10%", animationDelay: "1.6s" }} />
         <span className="tech-label absolute top-6 left-8 hidden md:block">// Creative Designer</span>
-        <span className="tech-label absolute top-6 right-8 hidden md:block">// Computer Engineering</span>
+        <span className="tech-label absolute top-6 right-8 hidden md:block">// 4th Year Computer Engineering Student</span>
       </div>
       
       {/* ── HERO: one viewport tall, centered, with the organization-logo strip
@@ -221,7 +224,7 @@ export default function About({ theme, onViewPubmats, onNavigate }: AboutProps) 
                 className="mb-4"
               >
                 <span className={`inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider ${theme.chip}`}>
-                  Computer Engineer / Graphic Artist / Layout Artist / Creatives
+                  Computer Engineering Student / Graphic Designer / Layout Artist / Creatives
                 </span>
               </motion.div>
 

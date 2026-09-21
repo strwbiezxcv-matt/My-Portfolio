@@ -1,8 +1,24 @@
+import type { CSSProperties } from "react";
 import { motion } from "motion/react";
 import { organizations } from "../../data";
 import type { Theme } from "../../theme";
 
 const reveal = { duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] as const };
+
+/* ── Logo compositing ──────────────────────────────────────────────────────────
+   `mix-blend-mode: multiply` is what seats two of the logos (the BulSU crest and
+   BSCPE 4B) seamlessly on the tile: both ship as 24-bit PNGs with an opaque
+   white/cream box, so multiply drops the box into the tile while keeping the
+   artwork. It is only correct over a LIGHT surface, though — multiplied against
+   this card's dark background every pixel collapses toward black and the marks
+   (including ICPEP's near-black badge) vanish. Multiply is therefore scoped to
+   light mode, dark mode composites normally, and the tile itself stays light in
+   both themes (see the logo tile in the card below). Same rule as the logo strip
+   in About.tsx. */
+type OrgBlend = (typeof organizations)[number]["blend"];
+
+const blendFor = (blend: OrgBlend, isDark: boolean): CSSProperties["mixBlendMode"] =>
+  isDark ? "normal" : blend;
 
 interface OrganizationsProps {
   theme: Theme;
@@ -56,7 +72,6 @@ export default function Organizations({ theme, isDark }: OrganizationsProps) {
             viewport={{ once: true }}
             transition={{ duration: 1.2, ease: "easeOut" }}
             className="absolute left-1/2 top-0 bottom-0 hidden w-px -translate-x-1/2 origin-top bg-gradient-to-b from-brand/0 via-brand/30 to-brand/0 md:block"
-            className="absolute left-1/2 top-0 bottom-0 hidden w-px -translate-x-1/2 origin-top bg-gradient-to-b from-brand/0 via-brand/30 to-brand/0 md:block"
           />
 
           {organizations.map((org, index) => {
@@ -87,13 +102,20 @@ export default function Organizations({ theme, isDark }: OrganizationsProps) {
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    {/* Logo node */}
-                    <div className={`flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border p-2 ${theme.chip}`}>
+                    {/* Logo tile — deliberately LIGHT in both themes: multiply only
+                        works over a light surface, and the two logos that ship with an
+                        opaque white/cream box plus ICPEP's dark badge need a light
+                        backdrop to stay legible on the dark card (see blendFor above). */}
+                    <div
+                      className={`flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border p-2 transition-colors duration-500 dark:border-white/20 dark:bg-[#f4f6f1] ${theme.chip}`}
+                    >
                       <img
                         src={org.image}
                         alt={org.name}
-                        className={`max-h-full max-w-full object-contain ${org.blend !== "normal" ? "motion-safe:transition-opacity duration-300 opacity-90 group-hover:opacity-100" : ""}`}
-                        style={org.blend !== "normal" ? { mixBlendMode: org.blend } : undefined}
+                        width={160}
+                        height={160}
+                        className="max-h-full max-w-full object-contain"
+                        style={{ mixBlendMode: blendFor(org.blend, isDark) }}
                         draggable={false}
                       />
                     </div>

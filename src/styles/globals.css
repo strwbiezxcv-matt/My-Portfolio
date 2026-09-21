@@ -456,24 +456,11 @@ html {
   height: var(--org-logo);
   flex-shrink: 0;
   object-fit: contain; /* always keeps the logo's original aspect ratio */
-  filter: drop-shadow(0 0 5px rgb(122 159 84 / 0.18));
-  transition: filter 300ms ease-out;
 }
 
-/* Subtle matte-green glow on the hovered/active logo — no spin, no neon. */
-.org-marquee-logo:hover,
-.org-marquee-logo:focus-visible {
-  filter: drop-shadow(0 0 9px rgb(122 159 84 / 0.45)) drop-shadow(0 0 20px rgb(78 115 51 / 0.2));
-}
-
-.dark .org-marquee-logo {
-  filter: drop-shadow(0 0 6px rgb(161 196 127 / 0.18));
-}
-
-.dark .org-marquee-logo:hover,
-.dark .org-marquee-logo:focus-visible {
-  filter: drop-shadow(0 0 9px rgb(161 196 127 / 0.4)) drop-shadow(0 0 20px rgb(122 159 84 / 0.2));
-}
+/* Hover intentionally adds NO effect here: no green drop-shadow/glow, no outline,
+   no border and no brightness/colour shift — every carousel logo keeps the exact
+   appearance of its source image in both themes. */
 
 @keyframes org-marquee {
   from { left: 0; }
